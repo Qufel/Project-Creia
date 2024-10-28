@@ -84,8 +84,6 @@ public class Engine implements Runnable {
                     frameTime = 0;
                     fps = frames;
                     frames = 0;
-
-                    System.out.println("FPS: " + fps);
                 }
 
             }
@@ -96,6 +94,7 @@ public class Engine implements Runnable {
 
                 //TODO: Render Game
                 aEngine.render(this, renderer, (float)updateCap);
+                renderer.drawText("FPS: " + fps , 4, 4, 0xffffffff);
 
                 window.update();
                 frames++;
