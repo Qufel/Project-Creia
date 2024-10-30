@@ -19,6 +19,8 @@ public class Game extends AbstractEngine {
         testBody = new PhysicsBody(new Vector2(engine.getWidth() / 2, engine.getHeight() / 2));
         testBody.setSprite(new AnimatedSprite("/res/sprites/animation.png", 16, 16));
 
+        testBody.getAnimatedSprite().loop = true;
+
         Font font = new Font("/res/fonts/NotJamFont.png");
     }
 
@@ -35,11 +37,12 @@ public class Game extends AbstractEngine {
         }
 
         if(engine.getInput().isKeyDown(KeyEvent.VK_SPACE)) {
-            testBody.getAnimatedSprite().pause();
-        }
-
-        if(engine.getInput().isKeyDown(KeyEvent.VK_1)) {
-            testBody.getAnimatedSprite().play();
+            if (testBody.getAnimatedSprite().isPlaying()) {
+                testBody.getAnimatedSprite().pause();
+            }
+            else {
+                testBody.getAnimatedSprite().play();
+            }
         }
 
     }
@@ -48,6 +51,7 @@ public class Game extends AbstractEngine {
     @Override
     public void render(Engine engine, Renderer renderer, float delta) {
         renderer.drawAnimatedSprite(testBody.getAnimatedSprite(), testBody.position.x, testBody.position.y, 0);
+        renderer.drawText("Animation time: " + testBody.getAnimatedSprite().animationProgress, 4, engine.getHeight() - 16, 0xffffffff);
     }
 
     public static void main(String[] args) {

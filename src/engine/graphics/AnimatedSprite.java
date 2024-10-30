@@ -4,6 +4,7 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.stream.IntStream;
 
 public class AnimatedSprite extends Sprite {
 
@@ -11,10 +12,10 @@ public class AnimatedSprite extends Sprite {
     private int[] framesDuration; // In ms
 
     private int currentFrame = 0;
-    private double animationProgress = 0.0;
+    public double animationProgress = 0.0;
 
     private boolean isPlaying = false;
-    private boolean loop = false;
+    public boolean loop = false;
 
     public AnimatedSprite(String filename, int tileWidth, int tileHeight) {
 
@@ -49,6 +50,7 @@ public class AnimatedSprite extends Sprite {
             }
         }
 
+        setFramesDuration(100);
     }
 
     //region Frame Duration
@@ -70,19 +72,41 @@ public class AnimatedSprite extends Sprite {
     //region Animation Controller
 
     public void play() {
-        isPlaying = true;
+        if (!isPlaying) {
+            isPlaying = true;
+        }
     }
 
     public void pause() {
-        isPlaying = false;
+        if (isPlaying) {
+            isPlaying = false;
+        }
     }
 
     public void updateProgress(double amount) {
         animationProgress += amount;
-        if (animationProgress >= animationFrames.length) {
+
+        // loop or stop animation
+        if (animationProgress >= IntStream.of(framesDuration).sum()) {
+            if (loop) {
+
+                animationProgress = 0.0;
+                currentFrame = 0;
+
+                return;
+            }
+            pause();
+            currentFrame = 0;
             animationProgress = 0.0;
+            return;
         }
-        currentFrame = (int)animationProgress;
+
+        //increment current frame
+        //TODO: Change to only increment after frame duration
+        if (animationProgress >= framesDuration[currentFrame] / 100.0) {
+            animationProgress = 0.0;
+            currentFrame++;
+        }
     }
 
     //endregion
