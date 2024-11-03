@@ -83,14 +83,17 @@ public class AnimatedSprite extends Sprite {
         }
     }
 
+    double animationTime = 0.0;
+
     public void updateProgress(double amount) {
         animationProgress += amount;
 
         // loop or stop animation
-        if (animationProgress >= IntStream.of(framesDuration).sum()) {
+        if (animationTime + animationProgress >= IntStream.of(framesDuration).sum() / 100.0) {
             if (loop) {
 
                 animationProgress = 0.0;
+                animationTime = 0.0;
                 currentFrame = 0;
 
                 return;
@@ -98,12 +101,14 @@ public class AnimatedSprite extends Sprite {
             pause();
             currentFrame = 0;
             animationProgress = 0.0;
+            animationTime = 0.0;
             return;
         }
 
         //increment current frame
         //TODO: Change to only increment after frame duration
         if (animationProgress >= framesDuration[currentFrame] / 100.0) {
+            animationTime += animationProgress;
             animationProgress = 0.0;
             currentFrame++;
         }
