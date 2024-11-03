@@ -6,33 +6,29 @@ import engine.graphics.Sprite;
 
 public class GameObject {
 
-    public Vector2 position;
-    public double angle = 0.0;
-    public Sprite sprite = null;
-    public AnimatedSprite animatedSprite = null;
+    private GameObject parent;
+    private GameObject[] children;
 
-    public void setSprite(Sprite sprite) {
+    public Vector2 position;
+
+    private Sprite sprite = null;
+
+    //region Sprites
+
+    public Sprite setSprite(Sprite sprite) {
         this.sprite = sprite;
 
         if (sprite != null) {
             this.position = this.position.subtract(new Vector2(this.sprite.getWidth() / 2, this.sprite.getHeight() / 2));
         }
-    }
 
-    public void setSprite(AnimatedSprite sprite) {
-        this.animatedSprite = sprite;
-
-        if (animatedSprite != null) {
-            this.position = this.position.subtract(new Vector2(this.animatedSprite.getWidth() / 2, this.animatedSprite.getHeight() / 2));
-        }
+        return sprite;
     }
 
     public Sprite getSprite() {
         return this.sprite;
     }
 
-    public AnimatedSprite getAnimatedSprite() {
-        return this.animatedSprite;
-    }
+    //endregion
 
 }

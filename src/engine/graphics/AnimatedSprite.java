@@ -50,7 +50,7 @@ public class AnimatedSprite extends Sprite {
             }
         }
 
-        setFramesDuration(100);
+        this.setFramesDuration(100);
     }
 
     //region Frame Duration
@@ -86,6 +86,7 @@ public class AnimatedSprite extends Sprite {
     double animationTime = 0.0;
 
     public void updateProgress(double amount) {
+        // update animation progress by set amount
         animationProgress += amount;
 
         // loop or stop animation
@@ -105,8 +106,7 @@ public class AnimatedSprite extends Sprite {
             return;
         }
 
-        //increment current frame
-        //TODO: Change to only increment after frame duration
+        // increment current frame when exceeds frame duration for previous frame
         if (animationProgress >= framesDuration[currentFrame] / 100.0) {
             animationTime += animationProgress;
             animationProgress = 0.0;
@@ -115,6 +115,7 @@ public class AnimatedSprite extends Sprite {
     }
 
     //endregion
+
 
     public int[][] getFrames() {
         return animationFrames;

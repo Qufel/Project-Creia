@@ -1,7 +1,6 @@
 import engine.*;
-import engine.graphics.AnimatedSprite;
-import engine.graphics.Font;
-import engine.objects.PhysicsBody;
+import engine.graphics.*;
+import engine.objects.*;
 
 import java.awt.event.KeyEvent;
 
@@ -18,10 +17,7 @@ public class Game extends AbstractEngine {
     public void start(Engine engine) {
         testBody = new PhysicsBody(new Vector2(engine.getWidth() / 2, engine.getHeight() / 2));
         testBody.setSprite(new AnimatedSprite("/res/sprites/animation.png", 16, 16));
-
-        testBody.getAnimatedSprite().loop = true;
-
-        Font font = new Font("/res/fonts/NotJamFont.png");
+        ((AnimatedSprite) testBody.getSprite()).loop = true;
     }
 
     // Runs every update frame
@@ -29,19 +25,20 @@ public class Game extends AbstractEngine {
     public void update(Engine engine, float delta) {
 
         if(engine.getInput().isKeyDown(KeyEvent.VK_H)) {
-            testBody.getAnimatedSprite().flipHorizontal();
+            testBody.getSprite().flipHorizontal();
         }
 
         if(engine.getInput().isKeyDown(KeyEvent.VK_V)) {
-            testBody.getAnimatedSprite().flipVertical();
+            testBody.getSprite().flipVertical();
         }
 
         if(engine.getInput().isKeyDown(KeyEvent.VK_SPACE)) {
-            if (testBody.getAnimatedSprite().isPlaying()) {
-                testBody.getAnimatedSprite().pause();
+
+            if (((AnimatedSprite) testBody.getSprite()).isPlaying()) {
+                ((AnimatedSprite) testBody.getSprite()).pause();
             }
             else {
-                testBody.getAnimatedSprite().play();
+                ((AnimatedSprite) testBody.getSprite()).play();
             }
         }
 
@@ -50,8 +47,8 @@ public class Game extends AbstractEngine {
     // Runs every render frame
     @Override
     public void render(Engine engine, Renderer renderer, float delta) {
-        renderer.drawAnimatedSprite(testBody.getAnimatedSprite(), testBody.position.x, testBody.position.y, 0);
-        renderer.drawText("Animation time: " + testBody.getAnimatedSprite().animationProgress, 4, engine.getHeight() - 16, 0xffffffff);
+
+        renderer.drawAnimatedSprite((AnimatedSprite) testBody.getSprite(), testBody.position.x, testBody.position.y, 0);
     }
 
     public static void main(String[] args) {
