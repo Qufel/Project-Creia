@@ -1,54 +1,39 @@
 import engine.*;
 import engine.graphics.*;
-import engine.objects.*;
-
-import java.awt.event.KeyEvent;
 
 public class Game extends AbstractEngine {
 
-    private PhysicsBody testBody;
+    private int mouseX, mouseY;
+
+    private AnimatedSprite player = new AnimatedSprite("/res/sprites/animation.png", 16, 16);
+    private Sprite platform = new Sprite("/res/sprites/platform.png");
 
     public Game() {
-
+        player.loop = true;
+        platform.setAlpha(true);
+        player.setAlpha(true);
     }
 
-    // Runs before the main thread starts
     @Override
     public void start(Engine engine) {
-        testBody = new PhysicsBody(new Vector2(engine.getWidth() / 2, engine.getHeight() / 2));
-        testBody.setSprite(new AnimatedSprite("/res/sprites/animation.png", 16, 16));
-        ((AnimatedSprite) testBody.getSprite()).loop = true;
+
     }
 
-    // Runs every update frame
     @Override
     public void update(Engine engine, float delta) {
 
-        if(engine.getInput().isKeyDown(KeyEvent.VK_H)) {
-            testBody.getSprite().flipHorizontal();
-        }
+        mouseX = engine.getInput().getMouseX();
+        mouseY = engine.getInput().getMouseY();
 
-        if(engine.getInput().isKeyDown(KeyEvent.VK_V)) {
-            testBody.getSprite().flipVertical();
-        }
-
-        if(engine.getInput().isKeyDown(KeyEvent.VK_SPACE)) {
-
-            if (((AnimatedSprite) testBody.getSprite()).isPlaying()) {
-                ((AnimatedSprite) testBody.getSprite()).pause();
-            }
-            else {
-                ((AnimatedSprite) testBody.getSprite()).play();
-            }
-        }
-
+        player.updateProgress(delta * 5);
     }
 
-    // Runs every render frame
     @Override
     public void render(Engine engine, Renderer renderer, float delta) {
-
-        renderer.drawAnimatedSprite((AnimatedSprite) testBody.getSprite(), testBody.position.x, testBody.position.y, 0);
+        renderer.setZDepth(2);
+        renderer.drawAnimatedSprite(player, mouseX - 8, mouseY - 8, -1);
+        renderer.setZDepth(0);
+        renderer.drawSprite(platform, engine.getWidth() / 2 - 24, engine.getHeight() / 2 + 16);
     }
 
     public static void main(String[] args) {

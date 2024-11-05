@@ -1,7 +1,6 @@
 package engine.objects;
 
 import engine.Vector2;
-import engine.graphics.AnimatedSprite;
 import engine.graphics.Sprite;
 
 public class GameObject {

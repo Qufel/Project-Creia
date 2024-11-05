@@ -13,6 +13,7 @@ public class Engine implements Runnable {
 
     private boolean running = false;
 
+    public final boolean UNCAPPED_FPS = false;
     private final double FRAMES_CAP = 60.0;
     private double updateCap = 1.0/FRAMES_CAP;
 
@@ -62,7 +63,7 @@ public class Engine implements Runnable {
 
         while (running) {
 
-            render = false;
+            render = UNCAPPED_FPS;
 
             firstTime = System.nanoTime() / 1000000000.0;
             passedTime = firstTime - lastTime;
@@ -94,6 +95,7 @@ public class Engine implements Runnable {
 
                 //TODO: Render Game
                 aEngine.render(this, renderer, (float)updateCap);
+                renderer.process();
                 renderer.drawText("FPS: " + fps , 4, 4, 0xffffffff);
 
                 window.update();

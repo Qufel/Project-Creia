@@ -12,6 +12,7 @@ public class Sprite {
 
     private int width, height;
     private int[] pixels;
+    private boolean alpha = false;
 
     public boolean flipedH = false;
     public boolean flipedV = false;
@@ -38,6 +39,14 @@ public class Sprite {
 
     public void setPixels(int[] pixels) {
         this.pixels = pixels;
+    }
+
+    public boolean isAlpha() {
+        return alpha;
+    }
+
+    public void setAlpha(boolean alpha) {
+        this.alpha = alpha;
     }
 
     public Sprite(String filename) {
