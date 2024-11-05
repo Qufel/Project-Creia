@@ -1,5 +1,8 @@
 import engine.*;
+import engine.audio.*;
 import engine.graphics.*;
+
+import java.awt.event.KeyEvent;
 
 public class Game extends AbstractEngine {
 
@@ -8,10 +11,15 @@ public class Game extends AbstractEngine {
     private AnimatedSprite player = new AnimatedSprite("/res/sprites/animation.png", 16, 16);
     private Sprite platform = new Sprite("/res/sprites/platform.png");
 
+    private AudioClip coin = new AudioClip("/res/audio/coin-pick.wav");
+
     public Game() {
         player.loop = true;
         platform.setAlpha(true);
         player.setAlpha(true);
+
+        coin.setVolume(-10);
+
     }
 
     @Override
@@ -26,6 +34,10 @@ public class Game extends AbstractEngine {
         mouseY = engine.getInput().getMouseY();
 
         player.updateProgress(delta * 5);
+
+        if (engine.getInput().isKeyDown(KeyEvent.VK_C)) {
+            coin.play();
+        }
     }
 
     @Override
