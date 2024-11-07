@@ -1,4 +1,4 @@
-package engine;
+package engine.physics;
 
 public class Vector2 {
 
@@ -17,6 +17,11 @@ public class Vector2 {
     public Vector2(Vector2 v) {
         this.x = v.x;
         this.y = v.y;
+    }
+
+    @Override
+    public String toString() {
+        return "(" + x + ", " + y + ")";
     }
 
     public double distanceTo(Vector2 v) {

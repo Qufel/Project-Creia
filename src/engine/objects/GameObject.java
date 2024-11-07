@@ -1,33 +1,111 @@
 package engine.objects;
 
-import engine.Vector2;
-import engine.graphics.Sprite;
+import engine.physics.Vector2;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class GameObject {
 
-    private GameObject parent;
-    private GameObject[] children;
+    private String name; // Unique name identifier inside parent
+    private GameObject parent; // Parent. Should be null only for Scene
+    private ArrayList<GameObject> children = new ArrayList<GameObject>();
 
-    public Vector2 position;
+    private Vector2 position;
+    private Vector2 globalPosition;
 
-    private Sprite sprite = null;
+    //region Getters & Setters
 
-    //region Sprites
+    public void setPosition(Vector2 position) {
+        this.position = position;
 
-    public Sprite setSprite(Sprite sprite) {
-        this.sprite = sprite;
-
-        if (sprite != null) {
-            this.position = this.position.subtract(new Vector2(this.sprite.getWidth() / 2, this.sprite.getHeight() / 2));
+        if(this instanceof SceneObject) {
+            globalPosition  = new Vector2(position.x, position.y);
+        } else {
+            globalPosition = parent.getGlobalPosition().add(new Vector2(position.x, -position.y));
         }
-
-        return sprite;
     }
 
-    public Sprite getSprite() {
-        return this.sprite;
+    public Vector2 getPosition() {
+        return position;
+    }
+
+    public Vector2 getGlobalPosition() {
+        return globalPosition;
     }
 
     //endregion
 
+    public GameObject(GameObject parent, String name, Vector2 position) {
+
+        if (parent == null && !(this instanceof SceneObject)) {
+            throw new NullPointerException("Parent is null");
+        }
+
+        this.parent = parent;
+
+        if (!(this instanceof SceneObject)) {
+            parent.addChildren(this);
+        }
+
+        this.name = name;
+        this.setPosition(position);
+    }
+
+    //region Children/Parent management
+
+    /**
+     * Returns a parent of this object
+     * @return
+     */
+    public GameObject getParent() {
+        return parent;
+    }
+
+    /**
+     * Adds child (or children) to this object.
+     * @param children object/objects to be added to the children list.
+     */
+    public void addChildren(GameObject ...children) {
+        this.children.addAll(Arrays.asList(children));
+    }
+
+    /**
+     * Returns a children list.
+     * @return children
+     */
+    public ArrayList<GameObject> getChildren() {
+        return children;
+    }
+
+    /**
+     * Removes a child from this object.
+     * @param child an object inside the children list.
+     */
+    public void removeChild(GameObject child) {
+        this.children.remove(child);
+    }
+
+    /**
+     * Returns a first child in this object by the index inside th children list.
+     * @param index an index of child inside this object.
+     * @return child | null
+     */
+    public GameObject getChild(int index) {
+        if( index < 0 || index >= this.children.size() )
+            return null;
+
+        return this.children.get(index);
+    }
+
+    /**
+     * Returns a first child of an object of a given name.
+     * @param name a name of a child inside the object.
+     * @return child | null
+     */
+    public GameObject getChild(String name) {
+        return this.children.stream().filter(obj -> obj.name == name).findFirst().orElse(null);
+    }
+
+    //endregion
 }
