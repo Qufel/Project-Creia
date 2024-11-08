@@ -22,6 +22,8 @@ public class Game extends AbstractEngine {
         root = new SceneObject("MainScene", new Vector2(engine.getWidth() / 2, engine.getHeight() / 2));
         player = new SpriteObject(root, "Player", new AnimatedSprite("/res/sprites/animation.png", 16, 16));
         player.setPosition(new Vector2(0, 0));
+
+        ((AnimatedSprite)(player.getSprite())).setAnimationSpeed(4.0);
     }
 
     @Override
@@ -50,7 +52,7 @@ public class Game extends AbstractEngine {
 
     @Override
     public void render(Engine engine, Renderer renderer, float delta) {
-        player.draw(renderer);
+        root.renderScene(engine, renderer, delta);
   }
 
     public static void main(String[] args) {

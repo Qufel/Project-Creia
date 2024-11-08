@@ -36,7 +36,7 @@ public class SpriteObject extends GameObject {
         this.sprite = sprite;
     }
 
-    public void draw(Renderer renderer) {
+    public void draw(Renderer renderer, float delta) {
 
         if (sprite == null) {
             return;
@@ -47,11 +47,11 @@ public class SpriteObject extends GameObject {
         if (sprite instanceof AnimatedSprite) {
 
             AnimatedSprite animatedSprite = (AnimatedSprite) sprite;
-            renderer.drawAnimatedSprite(animatedSprite, this.getGlobalPosition().x - animatedSprite.getWidth() / 2, this.getGlobalPosition().y - animatedSprite.getHeight() / 2, animatedSprite.getCurrentFrame());
+            renderer.drawAnimatedSprite(animatedSprite, this.getGlobalPosition().x - animatedSprite.getWidth() / 2, this.getGlobalPosition().y - animatedSprite.getHeight() / 2, delta);
 
         } else {
 
-            renderer.drawSprite(sprite, this.getGlobalPosition().x / sprite.getWidth() / 2, this.getGlobalPosition().y - sprite.getHeight() / 2);
+            renderer.drawSprite(sprite, this.getGlobalPosition().x - sprite.getWidth() / 2, this.getGlobalPosition().y - sprite.getHeight() / 2);
 
         }
 

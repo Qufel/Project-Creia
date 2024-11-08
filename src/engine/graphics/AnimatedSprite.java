@@ -8,6 +8,7 @@ import java.util.stream.IntStream;
 
 public class AnimatedSprite extends Sprite {
 
+    private double animationSpeed = 1.0;
     private int[][] animationFrames; // Frames of an animation
     private int[] framesDuration; // In ms
 
@@ -138,4 +139,11 @@ public class AnimatedSprite extends Sprite {
         return isPlaying;
     }
 
+    public void setAnimationSpeed(double animationSpeed) {
+        this.animationSpeed = animationSpeed;
+    }
+
+    public double getAnimationSpeed() {
+        return animationSpeed;
+    }
 }

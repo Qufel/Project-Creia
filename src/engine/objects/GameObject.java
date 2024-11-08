@@ -14,6 +14,8 @@ public class GameObject {
     private Vector2 position;
     private Vector2 globalPosition;
 
+    private boolean visible = true;
+
     //region Getters & Setters
 
     public void setPosition(Vector2 position) {
@@ -24,6 +26,10 @@ public class GameObject {
         } else {
             globalPosition = parent.getGlobalPosition().add(new Vector2(position.x, -position.y));
         }
+
+        for (GameObject child : children) {
+            child.setPosition(child.getPosition());
+        }
     }
 
     public Vector2 getPosition() {
@@ -32,6 +38,14 @@ public class GameObject {
 
     public Vector2 getGlobalPosition() {
         return globalPosition;
+    }
+
+    public void setVisibility(boolean visible) {
+        this.visible = visible;
+    }
+
+    public boolean isVisible() {
+        return visible;
     }
 
     //endregion

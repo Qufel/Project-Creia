@@ -61,6 +61,9 @@ public class Engine implements Runnable {
         int frames = 0;
         int fps = 0;
 
+        if (UNCAPPED_FPS && fps > 0)
+            updateCap = (double) 1 / fps;
+
         while (running) {
 
             render = UNCAPPED_FPS;

@@ -22,6 +22,8 @@ public class Renderer {
     private Font font = Font.STANDARD;
     private ArrayList<SpriteRequest> spriteRequests = new ArrayList<SpriteRequest>();
 
+    private final int BACKGROUND_COLOR = 0xff8db7ff;
+
     public Renderer(Engine engine) {
 
         pixelH = engine.getHeight();
@@ -35,7 +37,7 @@ public class Renderer {
 
     public void clear() {
         for (int i = 0; i < pixels.length; i++) {
-            pixels[i] = 0xff000000;
+            pixels[i] = BACKGROUND_COLOR;
             zBuffer[i] = 0;
         }
     }
@@ -157,7 +159,7 @@ public class Renderer {
         }
     }
 
-    public void drawAnimatedSprite(AnimatedSprite sprite, int offX, int offY, int frame) {
+    public void drawAnimatedSprite(AnimatedSprite sprite, int offX, int offY, float delta) {
 
         if (!sprite.isPlaying()) {
 
@@ -170,7 +172,7 @@ public class Renderer {
         } else {
 
             //TODO: rendering animation frames
-            sprite.updateProgress(0.1);
+            sprite.updateProgress(sprite.getAnimationSpeed() * delta);
 
             Sprite newSprite = new Sprite(sprite.getFrames()[sprite.getCurrentFrame()], sprite.getWidth(), sprite.getHeight(), sprite.flipedH, sprite.flipedV);
             newSprite.setAlpha(sprite.isAlpha());

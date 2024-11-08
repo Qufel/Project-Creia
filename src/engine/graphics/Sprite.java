@@ -75,6 +75,10 @@ public class Sprite {
         this.flipedV = flipedV;
     }
 
+    public Sprite() {
+
+    }
+
     public boolean flipHorizontal() {
         flipedH = !flipedH;
         return flipedH;
