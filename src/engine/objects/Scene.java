@@ -4,11 +4,9 @@ import engine.Engine;
 import engine.Renderer;
 import engine.physics.Vector2;
 
-import java.util.ArrayList;
+public class Scene extends GameObject {
 
-public class SceneObject extends GameObject {
-
-    public SceneObject(String name, Vector2 position) {
+    public Scene(String name, Vector2 position) {
         super(null, name, position);
     }
 

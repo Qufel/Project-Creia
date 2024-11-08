@@ -21,7 +21,7 @@ public class GameObject {
     public void setPosition(Vector2 position) {
         this.position = position;
 
-        if(this instanceof SceneObject) {
+        if(this instanceof Scene) {
             globalPosition  = new Vector2(position.x, position.y);
         } else {
             globalPosition = parent.getGlobalPosition().add(new Vector2(position.x, -position.y));
@@ -52,18 +52,27 @@ public class GameObject {
 
     public GameObject(GameObject parent, String name, Vector2 position) {
 
-        if (parent == null && !(this instanceof SceneObject)) {
+        if (parent == null && !(this instanceof Scene)) {
             throw new NullPointerException("Parent is null");
         }
 
         this.parent = parent;
 
-        if (!(this instanceof SceneObject)) {
+        if (!(this instanceof Scene)) {
             parent.addChildren(this);
         }
 
         this.name = name;
         this.setPosition(position);
+    }
+
+    @Override
+    public String toString() {
+        return name;
+    }
+
+    public void decompose() {
+
     }
 
     //region Children/Parent management

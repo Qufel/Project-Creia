@@ -1,5 +1,7 @@
 package engine;
 
+import engine.physics.Physics;
+
 import java.awt.*;
 import java.lang.constant.Constable;
 
@@ -9,6 +11,8 @@ public class Engine implements Runnable {
     private Window window;
     private Renderer renderer;
     private Input input;
+    private Physics physics;
+
     private AbstractEngine aEngine;
 
     private boolean running = false;
@@ -31,15 +35,17 @@ public class Engine implements Runnable {
 
     public void start() {
 
-        aEngine.start(this);
-
         // Engine classes
         window = new Window(this);
         renderer = new Renderer(this);
         input = new Input(this);
+        physics = new Physics(this);
+
+        aEngine.start(this);
 
         thread = new Thread(this);
         thread.run();
+
 
     }
 
@@ -79,7 +85,10 @@ public class Engine implements Runnable {
                 unprocessedTime -= updateCap;
                 render = true;
 
-                //TODO: Update Game
+                // Update Physics Engine
+                physics.update();
+
+                // Update Game
                 aEngine.update(this, (float)updateCap);
 
                 input.update(); //Should be last
@@ -96,7 +105,7 @@ public class Engine implements Runnable {
 
                 renderer.clear();
 
-                //TODO: Render Game
+                // Render Game
                 aEngine.render(this, renderer, (float)updateCap);
                 renderer.process();
                 renderer.drawText("FPS: " + fps , 4, 4, 0xffffffff);
@@ -129,6 +138,10 @@ public class Engine implements Runnable {
 
     public Input getInput() {
         return input;
+    }
+
+    public Physics getPhysics() {
+        return physics;
     }
 
     public String getTitle() {

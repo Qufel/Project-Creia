@@ -1,17 +1,19 @@
 import engine.*;
-import engine.audio.*;
 import engine.graphics.*;
-import engine.objects.GameObject;
-import engine.objects.SceneObject;
+import engine.objects.PhysicsBody;
+import engine.objects.Scene;
 import engine.objects.SpriteObject;
+import engine.physics.Physics;
 import engine.physics.Vector2;
 
 import java.awt.event.KeyEvent;
 
 public class Game extends AbstractEngine {
 
-    private SceneObject root;
+    private Scene root;
     private SpriteObject player;
+
+    private PhysicsBody physicsBody;
 
     public Game() {
 
@@ -19,7 +21,7 @@ public class Game extends AbstractEngine {
 
     @Override
     public void start(Engine engine) {
-        root = new SceneObject("MainScene", new Vector2(engine.getWidth() / 2, engine.getHeight() / 2));
+        root = new Scene("MainScene", new Vector2(engine.getWidth() / 2, engine.getHeight() / 2));
 
         player = new SpriteObject(
                 root,
@@ -29,6 +31,13 @@ public class Game extends AbstractEngine {
 
         ((AnimatedSprite)(player.getSprite())).setAnimationSpeed(4.0);
         player.setRenderingLayer(RenderingLayer.PLAYER.ordinal());
+
+        physicsBody = new PhysicsBody(
+          root,
+          "Physics Body",
+          new Vector2(0, 0),
+          engine.getPhysics()
+        );
     }
 
     @Override
@@ -53,6 +62,17 @@ public class Game extends AbstractEngine {
 
         Vector2 newPosition = new Vector2(Math.round(player.getPosition().x + speed * direction), player.getPosition().y);
         player.setPosition(newPosition);
+
+        //region Debug Input
+
+        if (engine.getInput().isKeyDown(KeyEvent.VK_NUMPAD1)) {
+            System.out.println("List of PhysicsBodies:");
+            for (PhysicsBody b : engine.getPhysics().getPhysicsBodies()) {
+                System.out.println("- " + b);
+            }
+        }
+
+        //endregion
     }
 
     @Override
