@@ -16,7 +16,7 @@ public class Renderer {
     private int[] pixels;
     private int[] zBuffer;
 
-    private int zDepth = 0;
+    private int renderingDepth = 0;
     private boolean processing = false;
 
     private Font font = Font.STANDARD;
@@ -63,7 +63,7 @@ public class Renderer {
 
         // Render alpha
         for (SpriteRequest request : spriteRequests) {
-            setZDepth(request.zDepth);
+            setRenderingDepth(request.zDepth);
             drawSprite(request.sprite, request.offX, request.offY);
         }
         spriteRequests.clear();
@@ -81,11 +81,11 @@ public class Renderer {
 
         int index = x + y * pixelW;
 
-        if (zBuffer[index] > zDepth) {
+        if (zBuffer[index] > renderingDepth) {
             return;
         }
 
-        zBuffer[index] = zDepth;
+        zBuffer[index] = renderingDepth;
 
         if (alpha == 255) {
             pixels[y * pixelW + x] = color;
@@ -107,7 +107,7 @@ public class Renderer {
     public void drawSprite(Sprite sprite, int offX, int offY) {
 
         if (sprite.isAlpha() && !processing) {
-            spriteRequests.add(new SpriteRequest(sprite, zDepth, offX, offY));
+            spriteRequests.add(new SpriteRequest(sprite, renderingDepth, offX, offY));
             return;
         }
 
@@ -250,11 +250,11 @@ public class Renderer {
 
     //endregion
 
-    public int getZDepth() {
-        return zDepth;
+    public int getRenderingDepth() {
+        return renderingDepth;
     }
 
-    public void setZDepth(int zDepth) {
-        this.zDepth = zDepth;
+    public void setRenderingDepth(int renderingDepth) {
+        this.renderingDepth = renderingDepth;
     }
 }

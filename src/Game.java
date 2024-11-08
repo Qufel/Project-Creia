@@ -20,10 +20,15 @@ public class Game extends AbstractEngine {
     @Override
     public void start(Engine engine) {
         root = new SceneObject("MainScene", new Vector2(engine.getWidth() / 2, engine.getHeight() / 2));
-        player = new SpriteObject(root, "Player", new AnimatedSprite("/res/sprites/animation.png", 16, 16));
-        player.setPosition(new Vector2(0, 0));
+
+        player = new SpriteObject(
+                root,
+                "Player",
+                new Vector2(0, 0),
+                new AnimatedSprite("/res/sprites/animation.png", 16, 16));
 
         ((AnimatedSprite)(player.getSprite())).setAnimationSpeed(4.0);
+        player.setRenderingLayer(RenderingLayer.PLAYER.ordinal());
     }
 
     @Override

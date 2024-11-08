@@ -2,13 +2,14 @@ package engine.objects;
 
 import engine.Renderer;
 import engine.graphics.AnimatedSprite;
+import engine.graphics.RenderingLayer;
 import engine.graphics.Sprite;
 import engine.physics.Vector2;
 
 public class SpriteObject extends GameObject {
 
     private Sprite sprite; // Sprite or AnimatedSprite
-    private int z = 0;
+    private int renderingLayer = RenderingLayer.BACKGROUND.ordinal();
 
     //region Getters & Setters
 
@@ -20,18 +21,18 @@ public class SpriteObject extends GameObject {
         this.sprite = sprite;
     }
 
-    public int getZ() {
-        return z;
+    public int getRenderingLayer() {
+        return renderingLayer;
     }
 
-    public void setZ(int value) {
-        this.z = value;
+    public void setRenderingLayer(int value) {
+        this.renderingLayer = value;
     }
 
     //endregion
 
-    public SpriteObject(GameObject parent, String name, Sprite sprite) {
-        super(parent, name == null ? "Sprite" : name , new Vector2(0, 0));
+    public SpriteObject(GameObject parent, String name, Vector2 position, Sprite sprite) {
+        super(parent, name == null ? "Sprite" : name , position);
 
         this.sprite = sprite;
     }
@@ -42,7 +43,7 @@ public class SpriteObject extends GameObject {
             return;
         }
 
-        renderer.setZDepth(z);
+        renderer.setRenderingDepth(renderingLayer);
 
         if (sprite instanceof AnimatedSprite) {
 
@@ -55,7 +56,7 @@ public class SpriteObject extends GameObject {
 
         }
 
-        renderer.setZDepth(0);
+        renderer.setRenderingDepth(0);
     }
 
 }
