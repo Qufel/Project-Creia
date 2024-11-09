@@ -23,7 +23,7 @@ public class Engine implements Runnable {
 
     //region Display
 
-    private int width = 270, height = 180;
+    private int width = 240, height = 180;
     private float scale = 1f;
     private String title = "2D Game Project";
 
@@ -86,7 +86,7 @@ public class Engine implements Runnable {
                 render = true;
 
                 // Update Physics Engine
-                physics.update();
+                physics.update((float) updateCap);
 
                 // Update Game
                 aEngine.update(this, (float)updateCap);

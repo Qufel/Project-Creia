@@ -12,14 +12,20 @@ public class Physics {
 
     private ArrayList<PhysicsBody> physicsBodies = new ArrayList<>();
 
-    public final double GRAVITY = 9.81;
+    public final Vector2 GRAVITY = new Vector2(0, -6);
 
     public Physics(Engine engine) {
         this.engine = engine;
     }
 
-    // ESSENTIAL function for updating game physics
-    public void update() {
+    // Update physics
+    public void update(float delta) {
+
+        for (PhysicsBody pb : physicsBodies) {
+
+            //TODO: Calculate forces for every PhysicsBody and apply them
+
+        }
 
     }
 

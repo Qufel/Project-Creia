@@ -11,9 +11,9 @@ import java.awt.event.KeyEvent;
 public class Game extends AbstractEngine {
 
     private Scene root;
-    private SpriteObject player;
 
-    private PhysicsBody physicsBody;
+    private PhysicsBody player;
+    private SpriteObject sprite;
 
     public Game() {
 
@@ -23,45 +23,32 @@ public class Game extends AbstractEngine {
     public void start(Engine engine) {
         root = new Scene("MainScene", new Vector2(engine.getWidth() / 2, engine.getHeight() / 2));
 
-        player = new SpriteObject(
+        player = new PhysicsBody(
                 root,
                 "Player",
                 new Vector2(0, 0),
-                new AnimatedSprite("/res/sprites/animation.png", 16, 16));
-
-        ((AnimatedSprite)(player.getSprite())).setAnimationSpeed(4.0);
-        player.setRenderingLayer(RenderingLayer.PLAYER.ordinal());
-
-        physicsBody = new PhysicsBody(
-          root,
-          "Physics Body",
-          new Vector2(0, 0),
-          engine.getPhysics()
+                engine.getPhysics()
         );
+
+        sprite = new SpriteObject(
+                player,
+                "Sprite",
+                player.getPosition(),
+                new AnimatedSprite(
+                        "/res/sprites/animation.png",
+                        16, 16
+                )
+        );
+
+        ((AnimatedSprite)sprite.getSprite()).setAnimationSpeed(4.0);
+
+
     }
 
     @Override
     public void update(Engine engine, float delta) {
-        ((AnimatedSprite)player.getSprite()).play();
 
-        float speed = 100 * delta;
-
-        int direction = 0;
-
-        if (engine.getInput().isKey(KeyEvent.VK_D)) {
-            if (player.getSprite().flipedH) {
-                player.getSprite().flipHorizontal();
-            }
-            direction = 1;
-        } else if (engine.getInput().isKey(KeyEvent.VK_A)) {
-            if (!player.getSprite().flipedH) {
-                player.getSprite().flipHorizontal();
-            }
-            direction = -1;
-        }
-
-        Vector2 newPosition = new Vector2(Math.round(player.getPosition().x + speed * direction), player.getPosition().y);
-        player.setPosition(newPosition);
+        ((AnimatedSprite)sprite.getSprite()).play();
 
         //region Debug Input
 

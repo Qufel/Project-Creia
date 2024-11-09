@@ -22,7 +22,7 @@ public class Renderer {
     private Font font = Font.STANDARD;
     private ArrayList<SpriteRequest> spriteRequests = new ArrayList<SpriteRequest>();
 
-    private final int BACKGROUND_COLOR = 0xff8db7ff;
+    private final int BACKGROUND_COLOR = 0xff000000;
 
     public Renderer(Engine engine) {
 

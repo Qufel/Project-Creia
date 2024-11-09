@@ -24,16 +24,25 @@ public class Vector2 {
         return "(" + x + ", " + y + ")";
     }
 
-    public double distanceTo(Vector2 v) {
-        return Math.sqrt(Math.pow(this.x - v.x,2) + Math.pow(this.y - v.y,2));
+    public double distanceSquared(Vector2 v) {
+        return Math.pow(this.x - v.x,2) + Math.pow(this.y - v.y,2);
     }
 
-    public Vector2 subtract(Vector2 v) {
+    public Vector2 sub(Vector2 v) {
         return new Vector2(this.x - v.x,this.y - v.y);
     }
 
     public Vector2 add(Vector2 v) {
         return new Vector2(this.x + v.x,this.y + v.y);
     }
+
+    public Vector2 mul(double v) {
+        return new Vector2((int)(this.x * v), (int)(this.y * v));
+    }
+
+    public Vector2 mul(Vector2 v) {
+        return new Vector2((int)(this.x * v.x), (int)(this.y * v.y));
+    }
+
 
 }
