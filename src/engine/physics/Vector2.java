@@ -28,6 +28,10 @@ public class Vector2 {
         return Math.pow(this.x - v.x,2) + Math.pow(this.y - v.y,2);
     }
 
+    public double lengthSquared() {
+        return Math.pow(this.x,2) + Math.pow(this.y,2);
+    }
+
     public Vector2 sub(Vector2 v) {
         return new Vector2(this.x - v.x,this.y - v.y);
     }
@@ -44,5 +48,14 @@ public class Vector2 {
         return new Vector2((int)(this.x * v.x), (int)(this.y * v.y));
     }
 
+    public double dot(Vector2 v) {
+        return this.x * v.x + this.y * v.y;
+    }
+
+    public double[] normalize() {
+        double magnitude = Math.sqrt(this.lengthSquared());
+
+        return new double[]{(double) x / magnitude, (double) y / magnitude};
+    }
 
 }

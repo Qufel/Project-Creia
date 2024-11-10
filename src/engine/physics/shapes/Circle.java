@@ -1,6 +1,7 @@
 package engine.physics.shapes;
 
 import engine.objects.GameObject;
+import engine.physics.Vector2;
 
 public class Circle extends CollisionShape {
 
@@ -13,4 +14,11 @@ public class Circle extends CollisionShape {
         this.radius = radius;
     }
 
+    public int getRadius() {
+        return radius;
+    }
+
+    public Vector2 getCenter() {
+        return body.getPosition();
+    }
 }

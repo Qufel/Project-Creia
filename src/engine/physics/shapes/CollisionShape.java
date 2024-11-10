@@ -1,6 +1,7 @@
 package engine.physics.shapes;
 
 import engine.objects.GameObject;
+import engine.physics.Vector2;
 
 public class CollisionShape {
 
@@ -10,6 +11,10 @@ public class CollisionShape {
 
     public CollisionShape(GameObject body) {
         this.body = body;
+    }
+
+    public Vector2 getCenter() {
+        return body.getGlobalPosition();
     }
 
 }
