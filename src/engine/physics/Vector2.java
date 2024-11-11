@@ -6,8 +6,11 @@ public class Vector2 {
     public static final Vector2 UP = new Vector2(0,1);
     public static final Vector2 LEFT = new Vector2(-1,0);
     public static final Vector2 RIGHT = new Vector2(1,0);
+    public static final Vector2 ZERO = new Vector2(0, 0);
 
     public int x, y;
+
+    public Vector2() {}
 
     public Vector2(int x, int y) {
         this.x = x;

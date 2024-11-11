@@ -97,4 +97,12 @@ public class CollisionDetectionTests {
         assertTrue(IntersectionDetector.lineInAABB(aabb, lineHorizontal));
     }
 
+    @Test
+    void testAABBinAABB() {
+        AABB b1 = new AABB(new GameObject(scene, "a", new Vector2(2, 2)), new Vector2(2, 2));
+        AABB b2 = new AABB(new GameObject(scene, "b", new Vector2(2, 3)), new Vector2(2, 2));
+
+        assertTrue(IntersectionDetector.aabbInAABB(b1, b2));
+    }
+
 }

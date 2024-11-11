@@ -90,6 +90,13 @@ public class GameObject {
      * @param children object/objects to be added to the children list.
      */
     public void addChildren(GameObject ...children) {
+
+        for (GameObject child : children) {
+            if (this.children.contains(child)) {
+                this.removeChild(child);
+            }
+        }
+
         this.children.addAll(Arrays.asList(children));
     }
 

@@ -18,7 +18,4 @@ public class Circle extends CollisionShape {
         return radius;
     }
 
-    public Vector2 getCenter() {
-        return body.getPosition();
-    }
 }
