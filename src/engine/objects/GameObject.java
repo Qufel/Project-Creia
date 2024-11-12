@@ -68,11 +68,24 @@ public class GameObject {
 
     @Override
     public String toString() {
-        return name;
+        ArrayList<String> names = new ArrayList<>();
+        names.add(name);
+
+        GameObject p = this.parent;
+        while (p != null) {
+            names.addFirst(p.name);
+            p = p.getParent();
+        }
+
+        return String.join("/", names);
     }
 
     public void decompose() {
-
+        if (!children.isEmpty()) {
+            for (GameObject child : children) {
+                child.decompose();
+            }
+        }
     }
 
     //region Children/Parent management

@@ -6,7 +6,7 @@ import engine.objects.PhysicsBody;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class Physics {
+public class PhysicsEngine {
 
     private Engine engine;
 
@@ -14,7 +14,7 @@ public class Physics {
 
     public final Vector2 GRAVITY = new Vector2(0, -6);
 
-    public Physics(Engine engine) {
+    public PhysicsEngine(Engine engine) {
         this.engine = engine;
     }
 

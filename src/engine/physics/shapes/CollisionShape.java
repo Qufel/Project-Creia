@@ -17,4 +17,8 @@ public class CollisionShape {
         return body.getGlobalPosition();
     }
 
+    public void setBody(GameObject body) {
+        this.body = body;
+    }
+
 }

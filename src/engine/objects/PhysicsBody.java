@@ -1,11 +1,11 @@
 package engine.objects;
 
-import engine.physics.Physics;
+import engine.physics.PhysicsEngine;
 import engine.physics.Vector2;
 
 public class PhysicsBody extends GameObject {
 
-    private Physics physics; // A link to physics engine
+    private PhysicsEngine physicsEngine; // A link to physics engine
 
     private double mass; // The body's mass
     private double gravityScale = 1.0; // A scale in which gravity acts with this body i.e. how much is affected by it
@@ -54,17 +54,17 @@ public class PhysicsBody extends GameObject {
 
     //endregion
 
-    public PhysicsBody(GameObject parent, String name, Vector2 position, Physics physics) {
+    public PhysicsBody(GameObject parent, String name, Vector2 position, PhysicsEngine physicsEngine) {
         super(parent, name, position);
 
-        this.physics = physics;
-        physics.addPhysicsBody(this);
+        this.physicsEngine = physicsEngine;
+        physicsEngine.addPhysicsBody(this);
     }
 
     @Override
     public void decompose() {
         super.decompose();
-        physics.removePhysicsBody(this);
+        physicsEngine.removePhysicsBody(this);
     }
 
 }

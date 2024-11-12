@@ -1,9 +1,7 @@
 package engine;
 
-import engine.physics.Physics;
-
-import java.awt.*;
-import java.lang.constant.Constable;
+import engine.physics.CollisionEngine;
+import engine.physics.PhysicsEngine;
 
 public class Engine implements Runnable {
 
@@ -11,7 +9,8 @@ public class Engine implements Runnable {
     private Window window;
     private Renderer renderer;
     private Input input;
-    private Physics physics;
+    private PhysicsEngine physicsEngine;
+    private CollisionEngine collisionEngine;
 
     private AbstractEngine aEngine;
 
@@ -39,7 +38,8 @@ public class Engine implements Runnable {
         window = new Window(this);
         renderer = new Renderer(this);
         input = new Input(this);
-        physics = new Physics(this);
+        physicsEngine = new PhysicsEngine(this);
+        collisionEngine = new CollisionEngine(this);
 
         aEngine.start(this);
 
@@ -86,7 +86,8 @@ public class Engine implements Runnable {
                 render = true;
 
                 // Update Physics Engine
-                physics.update((float) updateCap);
+                physicsEngine.update((float) updateCap);
+                collisionEngine.update((float) updateCap);
 
                 // Update Game
                 aEngine.update(this, (float)updateCap);
@@ -140,8 +141,12 @@ public class Engine implements Runnable {
         return input;
     }
 
-    public Physics getPhysics() {
-        return physics;
+    public PhysicsEngine getPhysics() {
+        return physicsEngine;
+    }
+
+    public CollisionEngine getCollision() {
+        return collisionEngine;
     }
 
     public String getTitle() {

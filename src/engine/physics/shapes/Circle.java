@@ -9,6 +9,11 @@ public class Circle extends CollisionShape {
 
     public Circle() {}
 
+    public Circle(int radius) {
+        super();
+        this.radius = radius;
+    }
+
     public Circle(GameObject body, int radius) {
         super(body);
         this.radius = radius;
