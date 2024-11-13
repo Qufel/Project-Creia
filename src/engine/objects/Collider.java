@@ -42,6 +42,10 @@ public class Collider extends GameObject {
         return isColliding;
     }
 
+    public boolean isCollidingWith(GameObject object) {
+        return collidingObjects.contains(object);
+    }
+
     public void setColliding(boolean isColliding) {
         this.isColliding = isColliding;
     }
