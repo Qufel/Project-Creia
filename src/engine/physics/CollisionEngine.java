@@ -2,9 +2,7 @@ package engine.physics;
 
 import engine.Engine;
 import engine.objects.Collider;
-import engine.physics.shapes.AABB;
-import engine.physics.shapes.Circle;
-import engine.physics.shapes.CollisionShape;
+import engine.physics.shapes.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -15,7 +13,7 @@ public class CollisionEngine {
 
     private ArrayList<Collider> colliders = new ArrayList<>();
 
-    private ArrayList<CollisionPair> collisionPairs = new ArrayList<>();
+    private ArrayList<CollisionInfo> collisionInfos = new ArrayList<>();
 
     public CollisionEngine(Engine engine) {
         this.engine = engine;
@@ -31,116 +29,90 @@ public class CollisionEngine {
 
             boolean collide = false;
 
-            if (colliderMain.getCollisionShape() instanceof AABB) {
-                for (Collider collider : colliders) {
+            for (Collider collider : colliders) {
 
-                    // Avoid checking collision with itself
-                    if (colliderMain == collider)
-                        continue;
+                // Avoid checking collision with itself
+                if (colliderMain == collider)
+                    continue;
 
-                    if (collider.getCollisionShape() instanceof AABB) {
-                        collide = IntersectionDetector.aabbInAABB((AABB) colliderMain.getCollisionShape(), (AABB) collider.getCollisionShape());
-                    }
+                collide = IntersectionDetector.aabbInAABB((AABB) colliderMain.getAABB(), (AABB) collider.getAABB());
+                manageCollision(colliderMain, collider, collide);
 
-                    if (collider.getCollisionShape() instanceof Circle) {
-                        collide = IntersectionDetector.aabbInCircle((AABB)colliderMain.getCollisionShape(), (Circle)collider.getCollisionShape());
-                    }
-
-                    if (collide) {
-
-                        // Collision logic
-                        CollisionPair pair = new CollisionPair(colliderMain, collider);
-
-                        if (!isPairInArray(collisionPairs, pair)) {
-
-                            collisionPairs.add(pair);
-
-                            colliderMain.setColliding(true);
-                            colliderMain.getCollidingObjects().add(collider);
-
-                            collider.setColliding(true);
-                            collider.getCollidingObjects().add(colliderMain);
-
-                        }
-
-                    } else {
-
-                        CollisionPair pair = new CollisionPair(colliderMain, collider);
-                        if(isPairInArray(collisionPairs, pair)) {
-
-                            pair.getA().setColliding(false);
-                            pair.getB().setColliding(false);
-
-                            pair.getA().getCollidingObjects().remove(pair.getB());
-                            pair.getB().getCollidingObjects().remove(pair.getA());
-
-                            collisionPairs.removeIf(p -> CollisionPair.compare(pair, p));
-                        }
-
-                    }
-
-                }
-            } else if (colliderMain.getCollisionShape() instanceof Circle) {
-
-                // TODO: Check for collisions where main collision shape is a circle
-
-                for (Collider collider : colliders) {
-
-                    // Avoid checking collision with itself
-                    if (colliderMain == collider)
-                        continue;
-
-                    if (collider.getCollisionShape() instanceof AABB) {
-                        collide = IntersectionDetector.circleInAABB((Circle) colliderMain.getCollisionShape(), (AABB) collider.getCollisionShape());
-                    }
-
-                    if (collider.getCollisionShape() instanceof Circle) {
-                        collide = IntersectionDetector.circleInCircle((Circle)colliderMain.getCollisionShape(), (Circle)collider.getCollisionShape());
-                    }
-
-                    if (collide) {
-
-                        // Collision logic
-                        CollisionPair pair = new CollisionPair(colliderMain, collider);
-
-                        if (!isPairInArray(collisionPairs, pair)) {
-
-                            collisionPairs.add(pair);
-
-                            colliderMain.setColliding(true);
-                            colliderMain.getCollidingObjects().add(collider);
-
-                            collider.setColliding(true);
-                            collider.getCollidingObjects().add(colliderMain);
-
-                        }
-
-                    } else {
-
-                        CollisionPair pair = new CollisionPair(colliderMain, collider);
-                        if(isPairInArray(collisionPairs, pair)) {
-
-                            pair.getA().setColliding(false);
-                            pair.getB().setColliding(false);
-
-                            pair.getA().getCollidingObjects().remove(pair.getB());
-                            pair.getB().getCollidingObjects().remove(pair.getA());
-
-                            collisionPairs.removeIf(p -> CollisionPair.compare(pair, p));
-                        }
-
-                    }
-
-                }
             }
 
         }
 
     }
 
-    private static boolean isPairInArray(ArrayList<CollisionPair> pairs, CollisionPair pair) {
-        for (CollisionPair p : pairs) {
-            if (CollisionPair.compare(p, pair)) {
+    private void manageCollision(Collider colliderMain, Collider collider, boolean collide) {
+        if (collide) {
+
+
+            int normals = getCollisionNormal(colliderMain, collider);
+            // Collision logic
+            CollisionInfo pair = new CollisionInfo(colliderMain, collider);
+
+            if (!isPairInArray(collisionInfos, pair)) {
+
+                collisionInfos.add(pair);
+
+                colliderMain.setColliding(true);
+                colliderMain.getCollidingObjects().add(collider);
+
+                collider.setColliding(true);
+                collider.getCollidingObjects().add(colliderMain);
+
+            }
+
+        } else {
+
+            CollisionInfo pair = new CollisionInfo(colliderMain, collider);
+            if(isPairInArray(collisionInfos, pair)) {
+
+                pair.getA().setColliding(false);
+                pair.getB().setColliding(false);
+
+                pair.getA().getCollidingObjects().remove(pair.getB());
+                pair.getB().getCollidingObjects().remove(pair.getA());
+
+                collisionInfos.removeIf(p -> CollisionInfo.compare(pair, p));
+            }
+
+        }
+    }
+
+    private static int getCollisionNormal(Collider main, Collider other) {
+
+        int normals = 0b0000;
+
+        return normals;
+    }
+
+    private static int collisionNormalsAABBandAABB(AABB b1, AABB b2) {
+
+        int normals = 0b0000;
+
+        // Get four sides of AABB as lines
+
+        Line top = new Line(new Vector2(b2.getMin().x, b2.getMax().y), new Vector2(b2.getMax()));
+        Line right = new Line(new Vector2(b2.getMax()), new Vector2(b2.getMax().x, b2.getMin().y));
+        Line bottom = new Line(new Vector2(b2.getMin()), new Vector2(b2.getMax().x, b2.getMin().y));
+        Line left = new Line(new Vector2(b2.getMin()), new Vector2(b2.getMax().x, b2.getMax().y));
+
+        // Set bits for each collision
+
+        normals = (normals & ~(0b1 << 3)) | ((IntersectionDetector.lineInAABB(b1, top) ? 1 : 0) << 3);
+        normals = (normals & ~(0b1 << 2)) | ((IntersectionDetector.lineInAABB(b1, right) ? 1 : 0) << 2);
+        normals = (normals & ~(0b1 << 1)) | ((IntersectionDetector.lineInAABB(b1, bottom) ? 1 : 0) << 1);
+        normals = (normals & ~(0b1)) | ((IntersectionDetector.lineInAABB(b1, left) ? 1 : 0));
+
+        return normals;
+    }
+
+
+    private static boolean isPairInArray(ArrayList<CollisionInfo> pairs, CollisionInfo pair) {
+        for (CollisionInfo p : pairs) {
+            if (CollisionInfo.compare(p, pair)) {
                 return true;
             }
         }

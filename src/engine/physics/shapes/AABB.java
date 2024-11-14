@@ -1,10 +1,12 @@
 package engine.physics.shapes;
 
+import engine.objects.Collider;
 import engine.objects.GameObject;
 import engine.physics.Vector2;
 
-public class AABB extends CollisionShape{
+public class AABB {
 
+    private Collider collider;
     private Vector2 size = new Vector2(0,0);
 
     public AABB() {
@@ -16,9 +18,21 @@ public class AABB extends CollisionShape{
         this.size = size;
     }
 
-    public AABB(GameObject body, Vector2 size) {
-        super(body);
+    public AABB(Collider collider, Vector2 size) {
+        this.collider = collider;
         this.size = size;
+    }
+
+    public Vector2 getCenter() {
+        return collider.getGlobalPosition();
+    }
+
+    public void setCollider(Collider collider) {
+        this.collider = collider;
+    }
+
+    public Vector2 getSize() {
+        return size;
     }
 
     public Vector2 getMin() {

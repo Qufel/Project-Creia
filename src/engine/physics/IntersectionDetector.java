@@ -22,14 +22,6 @@ public class IntersectionDetector {
 
     }
 
-    public static boolean pointInCircle(Circle circle, Vector2 point) {
-
-        double d = new Vector2(circle.getCenter()).distanceSquared(point);
-
-        return d <= circle.getRadius() * circle.getRadius();
-
-    }
-
     public static boolean pointInAABB(AABB aabb, Vector2 point) {
 
         Vector2 min = aabb.getMin();
@@ -43,22 +35,6 @@ public class IntersectionDetector {
     //endregion
 
     //region Line
-
-    public static boolean lineInCircle(Circle circle, Line line) {
-
-        Vector2 lineVector = new Vector2(line.getEnd()).sub(line.getStart());
-        Vector2 vectorToCenter = new Vector2(circle.getCenter()).sub(line.getStart());
-
-        double t = (vectorToCenter.dot(lineVector)) / (lineVector.dot(lineVector));
-
-        if (t < 0.0 || t > 1.0) {
-            return false;
-        }
-
-        Vector2 point = new Vector2(line.getStart()).add(new Vector2(lineVector).mul(t));
-
-        return pointInCircle(circle, point);
-    }
 
     public static boolean lineInAABB(AABB aabb, Line line) {
 
@@ -135,49 +111,7 @@ public class IntersectionDetector {
 
     //endregion
 
-    //region Circle
-
-    public static boolean circleInLine(Line line, Circle circle) {
-        return lineInCircle(circle, line);
-    }
-
-    public static boolean circleInCircle(Circle c1, Circle c2) {
-
-        Vector2 circleToCircleVector = new Vector2(c1.getCenter()).sub(new Vector2(c2.getCenter()));
-        return Math.pow(c1.getRadius() + c2.getRadius(), 2) >= circleToCircleVector.lengthSquared();
-
-    }
-
-    public static boolean circleInAABB(Circle circle, AABB aabb) {
-        Vector2 min = aabb.getMin();
-        Vector2 max = aabb.getMax();
-
-        Vector2 closestPointToCircle = new Vector2(circle.getCenter());
-
-        if (closestPointToCircle.x < min.x) {
-            closestPointToCircle.x = min.x;
-        } else if (closestPointToCircle.x > max.x) {
-            closestPointToCircle.x = max.x;
-        }
-
-        if (closestPointToCircle.y < min.y) {
-            closestPointToCircle.y = min.y;
-        } else if (closestPointToCircle.y > max.y) {
-            closestPointToCircle.y = max.y;
-        }
-
-        Vector2 circleToAABB = new Vector2(circle.getCenter()).sub(closestPointToCircle);
-        return circleToAABB.lengthSquared() <= circle.getRadius() * circle.getRadius();
-
-    }
-
-    //endregion
-
     //region AABB
-
-    public static boolean aabbInCircle(AABB aabb, Circle circle) {
-        return circleInAABB(circle, aabb);
-    }
 
     public static boolean aabbInAABB(AABB b1, AABB b2) {
         return overlapOnAxis(b1, b2, Vector2.RIGHT) && overlapOnAxis(b2, b1, Vector2.UP);

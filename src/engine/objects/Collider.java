@@ -2,7 +2,7 @@ package engine.objects;
 
 import engine.physics.CollisionEngine;
 import engine.physics.Vector2;
-import engine.physics.shapes.CollisionShape;
+import engine.physics.shapes.AABB;
 
 import java.util.ArrayList;
 
@@ -10,18 +10,18 @@ public class Collider extends GameObject {
 
     private CollisionEngine cEngine;
 
-    private CollisionShape collisionShape = null;
+    private AABB aabb = null;
 
     private boolean isColliding = false;
     private ArrayList<GameObject> collidingObjects = new ArrayList<>();
 
-    public Collider(GameObject parent, String name, Vector2 position, CollisionShape shape, CollisionEngine cEngine) {
+    public Collider(GameObject parent, String name, Vector2 position, AABB aabb, CollisionEngine cEngine) {
         super(parent, name, position);
 
-        this.collisionShape = shape;
+        this.aabb = aabb;
         this.cEngine = cEngine;
 
-        this.collisionShape.setBody(this);
+        this.aabb.setCollider(this);
 
         cEngine.addCollider(this);
     }
@@ -34,8 +34,8 @@ public class Collider extends GameObject {
         cEngine.removeCollider(this);
     }
 
-    public CollisionShape getCollisionShape() {
-        return collisionShape;
+    public AABB getAABB() {
+        return aabb;
     }
 
     public boolean isColliding() {
