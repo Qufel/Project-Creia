@@ -3,6 +3,7 @@ package engine.objects;
 import engine.Engine;
 import engine.Renderer;
 import engine.physics.Vector2;
+import engine.physics.shapes.AABB;
 
 public class Scene extends GameObject {
 
@@ -14,35 +15,35 @@ public class Scene extends GameObject {
     /// - Object hierarchy
     /// - Object rendering
 
-    public void renderScene(Engine engine, Renderer renderer, float delta) {
+    public void renderScene(Engine engine, Renderer renderer, float delta, boolean debugColliders) {
 
         for(GameObject child : this.getChildren()) {
-            renderChildren(child, engine, renderer, delta);
+            renderChildren(child, engine, renderer, delta, debugColliders);
         }
 
     }
 
-    private void renderChildren(GameObject object, Engine engine, Renderer renderer, float delta) {
+    private void renderChildren(GameObject object, Engine engine, Renderer renderer, float delta, boolean debugColliders) {
 
         if (object.getChildren().isEmpty()) {
 
             // Render self
-            renderObject(object, renderer, delta);
+            renderObject(object, renderer, delta, debugColliders);
 
         } else {
 
             // Render self and then continue for children
 
-            renderObject(object, renderer, delta);
+            renderObject(object, renderer, delta, debugColliders);
 
             for (GameObject child : object.getChildren()) {
-                renderChildren(child, engine, renderer, delta);
+                renderChildren(child, engine, renderer, delta, debugColliders);
             }
         }
 
     }
 
-    private void renderObject(GameObject object, Renderer renderer, float delta) {
+    private void renderObject(GameObject object, Renderer renderer, float delta, boolean debugColliders) {
         // Check if object should be visible if not don't render
 
         if (!object.isVisible())
@@ -55,6 +56,19 @@ public class Scene extends GameObject {
             sprite.draw(renderer, delta);
         }
 
+        //region Debug
+
+        if (debugColliders) {
+            if (object instanceof Collider) {
+
+                AABB aabb = ((Collider) object).getAABB();
+                Vector2 center = new Vector2(aabb.getCenter()).sub(new Vector2(aabb.getSize()).mul(0.5));
+
+                renderer.drawRect(center.x, center.y, aabb.getSize().x - 1, aabb.getSize().y - 1, 0xff00ff00);
+            }
+        }
+
+        //endregion
 
     }
 

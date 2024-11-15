@@ -172,7 +172,7 @@ public class Renderer {
         } else {
 
             //TODO: rendering animation frames
-            sprite.updateProgress(sprite.getAnimationSpeed() * delta);
+            sprite.updateProgress(sprite.getAnimationSpeed() * delta * 10);
 
             Sprite newSprite = new Sprite(sprite.getFrames()[sprite.getCurrentFrame()], sprite.getWidth(), sprite.getHeight(), sprite.flipedH, sprite.flipedV);
             newSprite.setAlpha(sprite.isAlpha());
