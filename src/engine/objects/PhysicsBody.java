@@ -47,6 +47,10 @@ public class PhysicsBody extends GameObject implements ForceGenerator {
         return forces;
     }
 
+    public Vector2 getFinalForce() {
+        return finalForce;
+    }
+
     public double getMass() {
         return mass;
     }

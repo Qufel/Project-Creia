@@ -11,7 +11,9 @@ public class Game extends AbstractEngine {
     private Scene root;
 
     private PhysicsBody player;
-    private StaticBody platform;
+    private StaticBody platform1;
+    private StaticBody platform2;
+    private StaticBody platform3;
 
     public Game() {
 
@@ -31,10 +33,24 @@ public class Game extends AbstractEngine {
         player.setMass(1.0);
 
         // Platform setup
-        platform = new StaticBody(root, "Platform", new Vector2(-64, -40));
-        platform.addChildren(
-                new SpriteObject(platform, "Sprite", new Vector2(0, 0), new Sprite("/res/sprites/platform.png")),
-                new Collider(platform, "Collider", new Vector2(0, 0), new AABB(new Vector2(48, 16)), engine.getCollision())
+        platform1 = new StaticBody(root, "Platform1", new Vector2(-64, -40));
+        platform1.addChildren(
+                new SpriteObject(platform1, "Sprite", new Vector2(0, 0), new Sprite("/res/sprites/platform.png")),
+                new Collider(platform1, "Collider", new Vector2(0, 0), new AABB(new Vector2(48, 16)), engine.getCollision())
+        );
+
+        // Platform setup
+        platform2 = new StaticBody(root, "Platform2", new Vector2(0, 0));
+        platform2.addChildren(
+                new SpriteObject(platform2, "Sprite", new Vector2(0, 0), new Sprite("/res/sprites/platform.png")),
+                new Collider(platform2, "Collider", new Vector2(0, 0), new AABB(new Vector2(48, 16)), engine.getCollision())
+        );
+
+        // Platform setup
+        platform3 = new StaticBody(root, "Platform3", new Vector2(64, 40));
+        platform3.addChildren(
+                new SpriteObject(platform3, "Sprite", new Vector2(0, 0), new Sprite("/res/sprites/platform.png")),
+                new Collider(platform3, "Collider", new Vector2(0, 0), new AABB(new Vector2(48, 16)), engine.getCollision())
         );
     }
 
@@ -51,6 +67,8 @@ public class Game extends AbstractEngine {
         } else if (engine.getInput().isKey(KeyEvent.VK_A)) {
             direction = -1;
         }
+
+        player.setPosition(player.getPosition().add(Vector2.RIGHT.mul(direction).mul(2)));
 
         if (engine.getInput().isKeyDown(KeyEvent.VK_W)) {
             if (player.isOnGround()) {
@@ -79,8 +97,9 @@ public class Game extends AbstractEngine {
 
     @Override
     public void render(Engine engine, Renderer renderer, float delta) {
-        root.renderScene(engine, renderer, delta, false);
+        root.renderScene(engine, renderer, delta, true);
 
+        renderer.drawText("On Ground: " + player.isOnGround(), 4, engine.getHeight() - 30, 0xffffffff);
         renderer.drawText("Velocity: " + player.getVelocity(), 4, engine.getHeight() - 20, 0xffffffff);
         renderer.drawText("Acceleration: " + player.getAcceleration(), 4, engine.getHeight() - 10, 0xffffffff);
   }

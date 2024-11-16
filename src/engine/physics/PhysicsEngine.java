@@ -3,6 +3,7 @@ package engine.physics;
 import engine.Engine;
 import engine.objects.Collider;
 import engine.objects.PhysicsBody;
+import engine.objects.StaticBody;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,6 +25,11 @@ public class PhysicsEngine {
     // Update physics
     public void update(float delta) {
 
+        //FIXME: Falling through collider for no reason
+
+        //TODO: Friction
+        //TODO: Block movement and add counter forces on other normals
+
         for (PhysicsBody pb : physicsBodies) {
 
             Collider collider = pb.getCollider();
@@ -44,6 +50,8 @@ public class PhysicsEngine {
                 }
             }
 
+//            pb.addForce(frictionForce);
+
             if (pb.isOnGround()) {
                 pb.addForce(new Vector2(GRAVITY).mul(-1));
 
@@ -52,10 +60,7 @@ public class PhysicsEngine {
             }
 
             pb.sumForces();
-
-            //TODO: Calculate forces for every PhysicsBody and apply them
             pb.updateForce(delta);
-
             pb.clearForces();
 
         }
