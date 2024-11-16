@@ -55,10 +55,25 @@ public class Vector2 {
         return this.x * v.x + this.y * v.y;
     }
 
-    public double[] normalize() {
-        double magnitude = Math.sqrt(this.lengthSquared());
+    public Vector2 normalize() {
+        Vector2 v = new Vector2(this);
+        if (v.x > 1) {
+            v.x = 1;
+        } else if (v.x < -1) {
+            v.x = -1;
+        }
 
-        return new double[]{(double) x / magnitude, (double) y / magnitude};
+        if (v.y > 1) {
+            v.y = 1;
+        } else if (v.y < -1) {
+            v.y = -1;
+        }
+
+        return v;
+    }
+
+    public static boolean compare(Vector2 a, Vector2 b) {
+        return a.x == b.x && a.y == b.y;
     }
 
 }

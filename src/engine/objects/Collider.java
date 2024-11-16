@@ -13,7 +13,7 @@ public class Collider extends GameObject {
     private AABB aabb = null;
 
     private boolean isColliding = false;
-    private ArrayList<GameObject> collidingObjects = new ArrayList<>();
+    private ArrayList<Collider> collidingObjects = new ArrayList<>();
 
     public Collider(GameObject parent, String name, Vector2 position, AABB aabb, CollisionEngine cEngine) {
         super(parent, name, position);
@@ -28,10 +28,10 @@ public class Collider extends GameObject {
 
     @Override
     public void decompose() {
-        super.decompose();
         collidingObjects.clear();
-
         cEngine.removeCollider(this);
+
+        super.decompose();
     }
 
     public AABB getAABB() {
@@ -50,7 +50,7 @@ public class Collider extends GameObject {
         this.isColliding = isColliding;
     }
 
-    public ArrayList<GameObject> getCollidingObjects() {
+    public ArrayList<Collider> getCollidingObjects() {
         return collidingObjects;
     }
 }

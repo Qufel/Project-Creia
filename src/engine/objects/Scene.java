@@ -64,7 +64,11 @@ public class Scene extends GameObject {
                 AABB aabb = ((Collider) object).getAABB();
                 Vector2 center = new Vector2(aabb.getCenter()).sub(new Vector2(aabb.getSize()).mul(0.5));
 
-                renderer.drawRect(center.x, center.y, aabb.getSize().x - 1, aabb.getSize().y - 1, 0xff00ff00);
+                int color = 0xff00ff00;
+                if (((Collider) object).isColliding())
+                    color = 0xffff0000;
+
+                renderer.drawRect(center.x, center.y, aabb.getSize().x - 1, aabb.getSize().y - 1, color);
             }
         }
 

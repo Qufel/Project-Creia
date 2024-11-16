@@ -20,6 +20,8 @@ public class Engine implements Runnable {
     private final double FRAMES_CAP = 60.0;
     private double updateCap = 1.0/FRAMES_CAP;
 
+    private int framesPerSecond;
+
     //region Display
 
     private int width = 240, height = 180;
@@ -38,8 +40,8 @@ public class Engine implements Runnable {
         window = new Window(this);
         renderer = new Renderer(this);
         input = new Input(this);
-        physicsEngine = new PhysicsEngine(this);
         collisionEngine = new CollisionEngine(this);
+        physicsEngine = new PhysicsEngine(this, collisionEngine);
 
         aEngine.start(this);
 
@@ -85,9 +87,9 @@ public class Engine implements Runnable {
                 unprocessedTime -= updateCap;
                 render = true;
 
-                // Update Physics Engine
-                physicsEngine.update((float) updateCap);
-                collisionEngine.update((float) updateCap);
+                // Update Physics & Collision using fixed delta time
+                physicsEngine.update(1f / 60f);
+                collisionEngine.update(1f / 60f);
 
                 // Update Game
                 aEngine.update(this, (float)updateCap);
@@ -100,6 +102,7 @@ public class Engine implements Runnable {
                     frames = 0;
                 }
 
+                framesPerSecond = fps;
             }
 
             if (render) {
@@ -147,6 +150,10 @@ public class Engine implements Runnable {
 
     public CollisionEngine getCollision() {
         return collisionEngine;
+    }
+
+    public int getFramesPerSecond() {
+        return this.framesPerSecond;
     }
 
     public String getTitle() {
