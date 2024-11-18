@@ -39,17 +39,19 @@ public class CollisionSystem {
 
                 CollisionData data = new CollisionData();
 
+                PhysicsBody aBody = (PhysicsBody) a.getParent();
+                PhysicsBody bBody = (PhysicsBody) b.getParent();
+
+                aBody.onGround(false);
+                bBody.onGround(false);
+
                 if (IntersectionDetector.aabbInAABB(a.getAABB(), b.getAABB(), data)) {
-
-                    System.out.println("Collision between: " + a + " and " + b);
-
-                    PhysicsBody aBody = (PhysicsBody) a.getParent();
-                    PhysicsBody bBody = (PhysicsBody) b.getParent();
+//                    System.out.println("Collision between: " + a + " and " + b);
 
                     Vector2 vAB = aBody.getVelocity().sub(bBody.getVelocity());
                     double vN = vAB.dot(data.normal);
 
-                    final float epsilon = 0f;
+                    final float epsilon = 0.0f;
 
                     float impulseForce = (float) ((float) (-(1 + epsilon) * vN) / (data.normal.dot(data.normal) * (aBody.getInverseMass()) + bBody.getInverseMass()));
 
@@ -58,11 +60,25 @@ public class CollisionSystem {
                     Vector2 aVelocity = aBody.getVelocity();
                     Vector2 bVelocity = bBody.getVelocity();
 
-                    aBody.addForce(impulseVector);
-                    bBody.addForce(impulseVector);
+                    Vector2 r1 = a.getAABB().getCenter().sub(data.point);
+                    Vector2 r2 = b.getAABB().getCenter().sub(data.point);
+
+                    double constraint = b.getAABB().getCenter().add(r2).sub(a.getAABB().getCenter()).sub(r1).dot(data.normal);
+                    double constraintDiff = bVelocity.sub(aVelocity).dot(data.normal);
+
+                    System.out.println(data.normal);
 
                     aBody.setVelocity(aVelocity.add(impulseVector.mul(aBody.getInverseMass())));
                     bBody.setVelocity(bVelocity.sub(impulseVector.mul(bBody.getInverseMass())));
+
+                    aBody.setPosition(aBody.getPosition().sub(data.normal.mul(data.penetration).mul(aBody.getInverseMass())));
+                    bBody.setPosition(bBody.getPosition().add(data.normal.mul(data.penetration).mul(bBody.getInverseMass())));
+
+                    data.penetration = 0;
+
+                    aBody.addForce(impulseVector.mul(aBody.getMass()));
+                    bBody.addForce(impulseVector.mul(aBody.getMass()));
+
 
                 }
 

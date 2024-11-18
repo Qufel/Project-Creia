@@ -81,4 +81,8 @@ public class Vector2 {
         return v.x == this.x && v.y == this.y;
     }
 
+    public boolean larger(Vector2 v) {
+        return v.x > this.x && v.y > this.y;
+    }
+
 }

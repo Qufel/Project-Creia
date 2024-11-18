@@ -24,10 +24,10 @@ public class Game extends AbstractEngine {
         root = new Scene("MainScene", new Vector2(engine.getWidth() / 2, engine.getHeight() / 2));
 
         // Player setup
-        player = new PhysicsBody(root, "Player", new Vector2(-64, 32));
+        player = new PhysicsBody(root, "Player", new Vector2(-64, 0));
         player.addChildren(
                 new SpriteObject(player, "Sprite", new Vector2(0, 0), new AnimatedSprite("/res/sprites/animation.png", 16, 16)),
-                new Collider(player, "Collider", new Vector2(0, 0), new AABB(new Vector2(16, 16)))
+                new Collider(player, "Collider", new Vector2(0, 0), new AABB(new Vector2(10, 16)))
         );
 
         player.setMass(1.0);
@@ -52,7 +52,7 @@ public class Game extends AbstractEngine {
 
 
         // Platform setup
-        platform3 = new PhysicsBody(root, "Platform3", new Vector2(64, 40));
+        platform3 = new PhysicsBody(root, "Platform3", new Vector2(-64, 40));
         platform3.addChildren(
                 new SpriteObject(platform3, "Sprite", new Vector2(0, 0), new Sprite("/res/sprites/platform.png")),
                 new Collider(platform3, "Collider", new Vector2(0, 0), new AABB(new Vector2(48, 16)))

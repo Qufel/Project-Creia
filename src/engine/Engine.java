@@ -46,10 +46,6 @@ public class Engine implements Runnable {
 
         aEngine.start(this);
 
-        // Sort Colliders
-        collision.sortByMinX();
-        System.out.println("Sorted colliders");
-
         thread = new Thread(this);
         thread.run();
 
@@ -91,6 +87,9 @@ public class Engine implements Runnable {
             while (unprocessedTime >= updateCap) {
                 unprocessedTime -= updateCap;
                 render = true;
+
+                // Sort Colliders
+                collision.sortByMinX();
 
                 // Collision update
                 collision.update();
