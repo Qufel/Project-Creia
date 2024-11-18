@@ -15,6 +15,63 @@ public class Scene extends GameObject {
     /// - Object hierarchy
     /// - Object rendering
 
+    //region Physics & Collision management
+
+    public void addPhysicsBodies(Engine engine) {
+
+        for (GameObject child : this.getChildren()) {
+            addChildrenToPhysics(child, engine);
+        }
+
+    }
+
+    private void addChildrenToPhysics(GameObject object, Engine engine) {
+
+        if (object.getChildren().isEmpty()) {
+            if (object instanceof PhysicsBody) {
+                engine.getPhysics().addBody((PhysicsBody) object);
+            }
+        } else {
+
+            if (object instanceof PhysicsBody) {
+                engine.getPhysics().addBody((PhysicsBody) object);
+            }
+
+            for (GameObject child : object.getChildren()) {
+                addChildrenToPhysics(child, engine);
+            }
+        }
+
+    }
+
+    public void addColliders(Engine engine) {
+        for (GameObject child : this.getChildren()) {
+            addChildrenToCollision(child, engine);
+        }
+    }
+
+    private void addChildrenToCollision(GameObject object, Engine engine) {
+
+        if (object.getChildren().isEmpty()) {
+            if (object instanceof Collider) {
+                engine.getCollision().addCollider((Collider) object);
+            }
+        } else {
+
+            if (object instanceof Collider) {
+                engine.getCollision().addCollider((Collider) object);
+            }
+
+            for (GameObject child : object.getChildren()) {
+                addChildrenToCollision(child, engine);
+            }
+        }
+
+    }
+
+    //endregion
+
+
     public void renderScene(Engine engine, Renderer renderer, float delta, boolean debugColliders) {
 
         for(GameObject child : this.getChildren()) {

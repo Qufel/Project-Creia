@@ -72,8 +72,13 @@ public class Vector2 {
         return v;
     }
 
-    public static boolean compare(Vector2 a, Vector2 b) {
-        return a.x == b.x && a.y == b.y;
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) return false;
+        if (!(obj instanceof Vector2)) return false;
+
+        Vector2 v = (Vector2)obj;
+        return v.x == this.x && v.y == this.y;
     }
 
 }

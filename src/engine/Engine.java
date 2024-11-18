@@ -1,7 +1,8 @@
 package engine;
 
-import engine.physics.CollisionEngine;
-import engine.physics.PhysicsEngine;
+import engine.physics.CollisionSystem;
+import engine.physics.PhysicsSystem;
+import engine.physics.Vector2;
 
 public class Engine implements Runnable {
 
@@ -9,8 +10,8 @@ public class Engine implements Runnable {
     private Window window;
     private Renderer renderer;
     private Input input;
-    private PhysicsEngine physicsEngine;
-    private CollisionEngine collisionEngine;
+    private PhysicsSystem physics;
+    private CollisionSystem collision;
 
     private AbstractEngine aEngine;
 
@@ -40,10 +41,14 @@ public class Engine implements Runnable {
         window = new Window(this);
         renderer = new Renderer(this);
         input = new Input(this);
-        collisionEngine = new CollisionEngine(this);
-        physicsEngine = new PhysicsEngine(this, collisionEngine);
+        collision = new CollisionSystem();
+        physics = new PhysicsSystem(1f / 60f, new Vector2(0, -50));
 
         aEngine.start(this);
+
+        // Sort Colliders
+        collision.sortByMinX();
+        System.out.println("Sorted colliders");
 
         thread = new Thread(this);
         thread.run();
@@ -87,9 +92,11 @@ public class Engine implements Runnable {
                 unprocessedTime -= updateCap;
                 render = true;
 
-                // Update Physics & Collision using fixed delta time
-                physicsEngine.update(1f / 60f);
-                collisionEngine.update(1f / 60f);
+                // Collision update
+                collision.update();
+
+                // Physics update
+                physics.update((float) updateCap);
 
                 // Update Game
                 aEngine.update(this, (float)updateCap);
@@ -144,12 +151,12 @@ public class Engine implements Runnable {
         return input;
     }
 
-    public PhysicsEngine getPhysics() {
-        return physicsEngine;
+    public PhysicsSystem getPhysics() {
+        return physics;
     }
 
-    public CollisionEngine getCollision() {
-        return collisionEngine;
+    public CollisionSystem getCollision() {
+        return collision;
     }
 
     public int getFramesPerSecond() {

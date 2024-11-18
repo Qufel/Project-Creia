@@ -1,17 +1,13 @@
 package engine.objects;
 
-import engine.physics.ForceGenerator;
-import engine.physics.PhysicsEngine;
 import engine.physics.Vector2;
 
 import java.util.ArrayList;
 
-public class PhysicsBody extends GameObject implements ForceGenerator {
-
-    private PhysicsEngine physicsEngine; // A link to physics engine
+public class PhysicsBody extends GameObject {
 
     private double mass; // The body's mass
-    private double inverseMass;
+    private double inverseMass = 0.0;
 
     private double gravityScale = 1.0; // A scale in which gravity acts with this body i.e. how much is affected by it
 
@@ -55,6 +51,10 @@ public class PhysicsBody extends GameObject implements ForceGenerator {
         return mass;
     }
 
+    public double getInverseMass() {
+        return inverseMass;
+    }
+
     public void setMass(double mass) {
         this.mass = mass;
 
@@ -96,37 +96,34 @@ public class PhysicsBody extends GameObject implements ForceGenerator {
 
     //endregion
 
-    public PhysicsBody(GameObject parent, String name, Vector2 position, PhysicsEngine physicsEngine) {
+    public PhysicsBody(GameObject parent, String name, Vector2 position) {
         super(parent, name, position);
-
-        this.physicsEngine = physicsEngine;
-        physicsEngine.addPhysicsBody(this);
     }
 
-    @Override
-    public void updateForce(float delta) {
-        if (this.mass == 0.0) return;
+    public void physicsUpdate(float delta) {
+        if (mass == 0.0) return; //If mass is 0.0 then it's unaffected by physics
 
         this.acceleration = new Vector2(finalForce).mul(inverseMass);
-        this.velocity = velocity.add(acceleration.mul(delta * 10));
+        this.velocity = this.velocity.add(acceleration.mul(delta * 10));
 
-        setPosition(getPosition().add(new Vector2(velocity).mul(delta * 10)));
+        this.setPosition(this.getPosition().add(velocity.mul(delta * 10)));
+
+        clearForce();
     }
+
 
     @Override
     public void decompose() {
         super.decompose();
-        physicsEngine.removePhysicsBody(this);
     }
 
     //region Forces
 
     public void addForce(Vector2 force) {
-        forces.add(force);
+        this.finalForce = this.finalForce.add(force);
     }
 
-    public void clearForces() {
-        forces.clear();
+    public void clearForce() {
         finalForce = Vector2.ZERO;
     }
 

@@ -11,9 +11,9 @@ public class Game extends AbstractEngine {
     private Scene root;
 
     private PhysicsBody player;
-    private StaticBody platform1;
-    private StaticBody platform2;
-    private StaticBody platform3;
+    private PhysicsBody platform1;
+    private PhysicsBody platform2;
+    private PhysicsBody platform3;
 
     public Game() {
 
@@ -24,34 +24,46 @@ public class Game extends AbstractEngine {
         root = new Scene("MainScene", new Vector2(engine.getWidth() / 2, engine.getHeight() / 2));
 
         // Player setup
-        player = new PhysicsBody(root, "Player", new Vector2(-64, 32), engine.getPhysics());
+        player = new PhysicsBody(root, "Player", new Vector2(-64, 32));
         player.addChildren(
                 new SpriteObject(player, "Sprite", new Vector2(0, 0), new AnimatedSprite("/res/sprites/animation.png", 16, 16)),
-                new Collider(player, "Collider", new Vector2(0, 0), new AABB(new Vector2(16, 16)), engine.getCollision())
+                new Collider(player, "Collider", new Vector2(0, 0), new AABB(new Vector2(16, 16)))
         );
 
         player.setMass(1.0);
 
         // Platform setup
-        platform1 = new StaticBody(root, "Platform1", new Vector2(-64, -40));
+        platform1 = new PhysicsBody(root, "Platform1", new Vector2(-64, -40));
         platform1.addChildren(
                 new SpriteObject(platform1, "Sprite", new Vector2(0, 0), new Sprite("/res/sprites/platform.png")),
-                new Collider(platform1, "Collider", new Vector2(0, 0), new AABB(new Vector2(48, 16)), engine.getCollision())
+                new Collider(platform1, "Collider", new Vector2(0, 0), new AABB(new Vector2(48, 16)))
         );
 
+        platform1.setMass(0.0);
+
         // Platform setup
-        platform2 = new StaticBody(root, "Platform2", new Vector2(0, 0));
+        platform2 = new PhysicsBody(root, "Platform2", new Vector2(0, 0));
         platform2.addChildren(
                 new SpriteObject(platform2, "Sprite", new Vector2(0, 0), new Sprite("/res/sprites/platform.png")),
-                new Collider(platform2, "Collider", new Vector2(0, 0), new AABB(new Vector2(48, 16)), engine.getCollision())
+                new Collider(platform2, "Collider", new Vector2(0, 0), new AABB(new Vector2(48, 16)))
         );
 
+        platform2.setMass(0.0);
+
+
         // Platform setup
-        platform3 = new StaticBody(root, "Platform3", new Vector2(64, 40));
+        platform3 = new PhysicsBody(root, "Platform3", new Vector2(64, 40));
         platform3.addChildren(
                 new SpriteObject(platform3, "Sprite", new Vector2(0, 0), new Sprite("/res/sprites/platform.png")),
-                new Collider(platform3, "Collider", new Vector2(0, 0), new AABB(new Vector2(48, 16)), engine.getCollision())
+                new Collider(platform3, "Collider", new Vector2(0, 0), new AABB(new Vector2(48, 16)))
         );
+
+        platform3.setMass(0.0);
+
+        // Setup CollisionSystem & PhysicsSystem
+        root.addColliders(engine);
+        root.addPhysicsBodies(engine);
+
     }
 
     @Override
@@ -71,28 +83,10 @@ public class Game extends AbstractEngine {
         player.setPosition(player.getPosition().add(Vector2.RIGHT.mul(direction).mul(2)));
 
         if (engine.getInput().isKeyDown(KeyEvent.VK_W)) {
-            if (player.isOnGround()) {
-                player.addForce(Vector2.UP.mul(200));
-            }
+            player.addForce(Vector2.UP.mul(200));
         }
 
-        //region Debug Input
 
-        if (engine.getInput().isKeyDown(KeyEvent.VK_NUMPAD1)) {
-            System.out.println("List of PhysicsBodies:");
-            for (PhysicsBody b : engine.getPhysics().getPhysicsBodies()) {
-                System.out.println("- " + b);
-            }
-        }
-
-        if (engine.getInput().isKeyDown(KeyEvent.VK_NUMPAD2)) {
-            System.out.println("List of Colliders:");
-            for (Collider c : engine.getCollision().getColliders()) {
-                System.out.println("- " + c);
-            }
-        }
-
-        //endregion
     }
 
     @Override

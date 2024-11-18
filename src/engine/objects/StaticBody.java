@@ -1,19 +1,14 @@
 package engine.objects;
 
-import engine.physics.ForceGenerator;
+import engine.physics.forces.ForceGenerator;
 import engine.physics.Vector2;
 
-public class StaticBody extends GameObject implements ForceGenerator {
+public class StaticBody extends GameObject {
 
     private double friction = 0.0;
 
     public StaticBody(GameObject parent, String name, Vector2 position) {
         super(parent, name, position);
-    }
-
-    @Override
-    public void updateForce(float delta) {
-
     }
 
     public double getFriction() {
