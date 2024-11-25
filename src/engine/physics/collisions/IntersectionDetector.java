@@ -140,18 +140,29 @@ public class IntersectionDetector {
 
             Vector2 centerToCenter = new Vector2(b1.getCenter().x - b2.getCenter().x, b1.getCenter().y - b2.getCenter().y);
 
-            if (aY.x == bY.y || aY.y == bY.x) {
-                if (centerToCenter.y < 0) {
-                    setData(data, Vector2.UP, new Vector2(penetrationX, penetrationY));
-                } else {
-                    setData(data, Vector2.DOWN, new Vector2(penetrationX, penetrationY));
-                }
+//            if (aY.x == bY.y || aY.y == bY.x) {
+//                if (centerToCenter.y < 0) {
+//                    setData(data, Vector2.UP, new Vector2(penetrationX, penetrationY));
+//                } else {
+//                    setData(data, Vector2.DOWN, new Vector2(penetrationX, penetrationY));
+//                }
+//            } else {
+//                if (centerToCenter.x < 0) {
+//                    setData(data, Vector2.LEFT, new Vector2(penetrationX, penetrationY));
+//                } else {
+//                    setData(data, Vector2.RIGHT, new Vector2(penetrationX, penetrationY));
+//                }
+//            }
+
+            if (centerToCenter.x < 0) {
+                setData(data, Vector2.LEFT, new Vector2(penetrationX, penetrationY));
             } else {
-                if (centerToCenter.x < 0) {
-                    setData(data, Vector2.LEFT, new Vector2(penetrationX, penetrationY));
-                } else {
-                    setData(data, Vector2.RIGHT, new Vector2(penetrationX, penetrationY));
-                }
+                setData(data, Vector2.RIGHT, new Vector2(penetrationX, penetrationY));
+            }
+            if (centerToCenter.y < 0) {
+                setData(data, Vector2.UP, new Vector2(penetrationX, penetrationY));
+            } else {
+                setData(data, Vector2.DOWN, new Vector2(penetrationX, penetrationY));
             }
 
             colliding = true;

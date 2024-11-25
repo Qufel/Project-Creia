@@ -10,7 +10,7 @@ public class PhysicsSystem {
     private ForceRegistry forceRegistry;
     private ArrayList<PhysicsBody> bodies;
 
-    private Gravity gravity;
+    public Gravity gravity;
     private float fixedDelta;
 
     public ForceRegistry getForceRegistry() {
@@ -39,7 +39,7 @@ public class PhysicsSystem {
     public void addBody(PhysicsBody body) {
         this.bodies.add(body);
         if (body.getMass() != 0.0) {
-//            this.forceRegistry.add(body, gravity);
+            this.forceRegistry.add(body, gravity);
         }
     }
 
