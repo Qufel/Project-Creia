@@ -127,12 +127,6 @@ public class PhysicsBody extends GameObject {
         finalForce = Vector2.ZERO;
     }
 
-    public void sumForces() {
-        for (Vector2 force : forces) {
-            this.finalForce = finalForce.add(force);
-        }
-    }
-
     //endregion
 
     //region Colliders

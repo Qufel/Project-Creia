@@ -13,6 +13,10 @@ public class PhysicsSystem {
     private Gravity gravity;
     private float fixedDelta;
 
+    public ForceRegistry getForceRegistry() {
+        return forceRegistry;
+    }
+
     public PhysicsSystem(float fixedDelta, Vector2 gravity) {
         this.forceRegistry = new ForceRegistry();
         this.bodies = new ArrayList<>();
@@ -34,8 +38,9 @@ public class PhysicsSystem {
 
     public void addBody(PhysicsBody body) {
         this.bodies.add(body);
-        this.forceRegistry.add(body, gravity);
-//        body.init();
+        if (body.getMass() != 0.0) {
+//            this.forceRegistry.add(body, gravity);
+        }
     }
 
     public void clearBodies() {

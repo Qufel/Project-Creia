@@ -41,7 +41,7 @@ public class Engine implements Runnable {
         window = new Window(this);
         renderer = new Renderer(this);
         input = new Input(this);
-        collision = new CollisionSystem();
+        collision = new CollisionSystem(this);
         physics = new PhysicsSystem(1f / 60f, new Vector2(0, -50));
 
         aEngine.start(this);
@@ -89,7 +89,7 @@ public class Engine implements Runnable {
                 render = true;
 
                 // Sort Colliders
-                collision.sortByMinX();
+//                collision.sortByMinX();
 
                 // Collision update
                 collision.update();

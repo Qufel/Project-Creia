@@ -2,6 +2,7 @@ import engine.*;
 import engine.graphics.*;
 import engine.objects.*;
 import engine.physics.Vector2;
+import engine.physics.forces.ForceGenerator;
 import engine.physics.shapes.AABB;
 
 import java.awt.event.KeyEvent;
@@ -14,6 +15,9 @@ public class Game extends AbstractEngine {
     private PhysicsBody platform1;
     private PhysicsBody platform2;
     private PhysicsBody platform3;
+
+    private PhysicsBody wall1;
+    private PhysicsBody wall2;
 
     public Game() {
 
@@ -60,6 +64,20 @@ public class Game extends AbstractEngine {
 
         platform3.setMass(0.0);
 
+//        wall1 = new PhysicsBody(root, "Wall", new Vector2(-83, 0));
+//        wall1.addChildren(
+//                new Collider(wall1, "Collider", new Vector2(0, 0), new AABB(new Vector2(10, 64)))
+//        );
+//
+//        wall1.setMass(0.0);
+//
+//        wall2 = new PhysicsBody(root, "Wall", new Vector2(-45, 0));
+//        wall2.addChildren(
+//                new Collider(wall2, "Collider", new Vector2(0, 0), new AABB(new Vector2(10, 64)))
+//        );
+//
+//        wall2.setMass(0.0);
+
         // Setup CollisionSystem & PhysicsSystem
         root.addColliders(engine);
         root.addPhysicsBodies(engine);
@@ -72,20 +90,38 @@ public class Game extends AbstractEngine {
         ((AnimatedSprite) ((SpriteObject) player.getChild("Sprite")).getSprite()).setFramesDuration(200);
         ((AnimatedSprite) ((SpriteObject) player.getChild("Sprite")).getSprite()).play();
 
-        int direction = 0;
+        Vector2 direction = new Vector2(0, 0);
 
         if (engine.getInput().isKey(KeyEvent.VK_D)) {
-            direction = 1;
+            direction.x = 1;
         } else if (engine.getInput().isKey(KeyEvent.VK_A)) {
-            direction = -1;
+            direction.x = -1;
         }
 
-        player.setPosition(player.getPosition().add(Vector2.RIGHT.mul(direction).mul(2)));
-
-        if (engine.getInput().isKeyDown(KeyEvent.VK_W)) {
-            player.addForce(Vector2.UP.mul(200));
+        if (engine.getInput().isKey(KeyEvent.VK_W)) {
+            direction.y = 1;
+        } else if (engine.getInput().isKey(KeyEvent.VK_S)) {
+            direction.y = -1;
         }
 
+        player.setPosition(player.getPosition().add(direction.mul(2)));
+
+//        if (engine.getInput().isKeyDown(KeyEvent.VK_W)) {
+//            engine.getPhysics().getForceRegistry().add(player, new ForceGenerator() {
+//                @Override
+//                public void updateForce(PhysicsBody body, float delta) {
+//                    body.addForce(Vector2.UP.mul(100).mul(delta * 10));
+////                    engine.getPhysics().getForceRegistry().remove(body, this);
+//                }
+//            });
+//        }
+
+        if (engine.getInput().isKeyDown(KeyEvent.VK_NUMPAD1)) {
+            System.out.println("===");
+            for (GameObject object : player.getCollider().getCollidingObjects()) {
+                System.out.println("- " + object);
+            }
+        }
 
     }
 

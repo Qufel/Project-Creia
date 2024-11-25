@@ -3,6 +3,8 @@ package engine.physics.collisions;
 import engine.physics.Vector2;
 import engine.physics.shapes.*;
 
+import java.awt.*;
+
 public class IntersectionDetector {
 
     //region Point
@@ -120,61 +122,42 @@ public class IntersectionDetector {
 
     public static boolean aabbInAABB(AABB b1, AABB b2, CollisionData data) {
 
-        Vector2 normal = Vector2.ZERO;
-        Vector2 point = Vector2.ZERO;
-        float penetration = Float.MIN_VALUE;
+        boolean colliding = false;
 
-        // X-axis check
-
-        Vector2 aX = getInterval(b1, Vector2.UP);
-        Vector2 bX = getInterval(b2, Vector2.UP);
-
-        boolean overlapOnX = bX.x <= aX.y && aX.x <= bX.y;
-
-        if (aX.x > bX.x) {
-
-            normal = Vector2.RIGHT;
-            penetration = bX.y - aX.x;
-            point = new Vector2(b1.getCenter().x, bX.y);
-
-        }
-
-        if (aX.y < bX.y) {
-
-            normal = Vector2.LEFT;
-            penetration = aX.y - bX.x;
-            point = new Vector2(b1.getCenter().x, bX.x);
-
-        }
-
-        // Y-axis check
+        Vector2 aX = getInterval(b1, Vector2.RIGHT);
+        Vector2 bX = getInterval(b2, Vector2.RIGHT);
 
         Vector2 aY = getInterval(b1, Vector2.UP);
         Vector2 bY = getInterval(b2, Vector2.UP);
 
-        boolean overlapOnY = bY.x <= aY.y && aY.x <= bY.y;
+        if ( (bX.x <= aX.y && aX.x <= bX.y) && (bY.x <= aY.y && aY.x <= bY.y) ) {
 
-        if (aY.x > bY.x) {
+            int penetrationY = Math.min(aY.y - bY.x, bY.y - aY.x);
+            int penetrationX = Math.min(aX.y - bX.x, bX.y - aX.x);
 
-            normal = Vector2.UP;
-            penetration = bY.y - aY.x;
-            point = new Vector2(bY.y, b1.getCenter().y);
+            Vector2 centerToCenter = new Vector2(b1.getCenter().x - b2.getCenter().x, b1.getCenter().y - b2.getCenter().y);
 
+            if ( Math.abs( (aY.x - bY.y) / 2) == Math.abs(centerToCenter.y) || aY.x - bY.y == 0) {
+//                System.out.println("OK");
+                if (centerToCenter.y < 0) {
+                    System.out.println("Top");
+                } else {
+                    System.out.println("Bottom");
+                }
+            } else {
+                if (centerToCenter.x < 0) {
+                    System.out.println("Left");
+                } else {
+                    System.out.println("Right");
+                }
+            }
+
+
+
+            colliding = true;
         }
 
-        if (aY.y < bX.y) {
-
-            normal = Vector2.DOWN;
-            penetration = aY.y - bY.x;
-            point = new Vector2(bY.x, b1.getCenter().y);
-
-        }
-
-        data.normal = normal;
-        data.penetration = penetration;
-        data.point = point;
-
-        return overlapOnX && overlapOnY;
+        return colliding;
 
     }
 

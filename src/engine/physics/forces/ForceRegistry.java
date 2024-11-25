@@ -31,6 +31,16 @@ public class ForceRegistry {
         }
     }
 
+    public ArrayList<ForceRegistration> getRegistryForBody(PhysicsBody body) {
+        ArrayList<ForceRegistration> result = new ArrayList<>();
+        for (ForceRegistration registration : registry) {
+            if (registration.body == body) {
+                result.add(registration);
+            }
+        }
+        return result;
+    }
+
     public void zeroForces() {
         for (ForceRegistration registration : registry) {
             registration.body.clearForce();
