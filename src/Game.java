@@ -104,7 +104,7 @@ public class Game extends AbstractEngine {
             direction.y = -1;
         }
 
-        player.setPosition(player.getPosition().add(direction.mul(2)));
+        player.setVelocity(direction.mul(20));
 
 //        if (engine.getInput().isKeyDown(KeyEvent.VK_W)) {
 //            engine.getPhysics().getForceRegistry().add(player, new ForceGenerator() {
@@ -129,7 +129,8 @@ public class Game extends AbstractEngine {
     public void render(Engine engine, Renderer renderer, float delta) {
         root.renderScene(engine, renderer, delta, true);
 
-        renderer.drawText("On Ground: " + player.isOnGround(), 4, engine.getHeight() - 30, 0xffffffff);
+        renderer.drawText(player.getGlobalPosition().toString(), engine.getWidth() - 50, 4, 0xffffffff);
+
         renderer.drawText("Velocity: " + player.getVelocity(), 4, engine.getHeight() - 20, 0xffffffff);
         renderer.drawText("Acceleration: " + player.getAcceleration(), 4, engine.getHeight() - 10, 0xffffffff);
   }

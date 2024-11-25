@@ -135,24 +135,24 @@ public class IntersectionDetector {
             int penetrationY = Math.min(aY.y - bY.x, bY.y - aY.x);
             int penetrationX = Math.min(aX.y - bX.x, bX.y - aX.x);
 
+            Vector2 centerA = b1.getCenter();
+            Vector2 centerB = b2.getCenter();
+
             Vector2 centerToCenter = new Vector2(b1.getCenter().x - b2.getCenter().x, b1.getCenter().y - b2.getCenter().y);
 
-            if ( Math.abs( (aY.x - bY.y) / 2) == Math.abs(centerToCenter.y) || aY.x - bY.y == 0) {
-//                System.out.println("OK");
+            if (aY.x == bY.y || aY.y == bY.x) {
                 if (centerToCenter.y < 0) {
-                    System.out.println("Top");
+                    setData(data, Vector2.UP, new Vector2(penetrationX, penetrationY));
                 } else {
-                    System.out.println("Bottom");
+                    setData(data, Vector2.DOWN, new Vector2(penetrationX, penetrationY));
                 }
             } else {
                 if (centerToCenter.x < 0) {
-                    System.out.println("Left");
+                    setData(data, Vector2.LEFT, new Vector2(penetrationX, penetrationY));
                 } else {
-                    System.out.println("Right");
+                    setData(data, Vector2.RIGHT, new Vector2(penetrationX, penetrationY));
                 }
             }
-
-
 
             colliding = true;
         }
@@ -161,12 +161,21 @@ public class IntersectionDetector {
 
     }
 
+    private static void setData(CollisionData data, Vector2 normal, Vector2 penetration) {
+        data.normal = normal;
+        data.penetration = penetration;
+    }
+
     private static boolean overlapOnAxis(AABB b1, AABB b2, Vector2 axis) {
         Vector2 res1 = getInterval(b1, axis);
         Vector2 res2 = getInterval(b2, axis);
 
         return res2.x <= res1.y && res1.x <= res2.y;
 
+    }
+
+    private static boolean doIntervalContainsInterval(Vector2 i1, Vector2 i2) {
+        return i1.x >= i2.x && i1.y <= i2.y;
     }
 
     private static Vector2 getInterval(AABB aabb, Vector2 axis) {

@@ -44,11 +44,42 @@ public class Vector2 {
     }
 
     public Vector2 mul(double v) {
-        return new Vector2((int)(this.x * v), (int)(this.y * v));
+        double newX = this.x * v, newY = this.y * v;
+        int finalX, finalY;
+
+        if (newX >= 0) {
+            finalX = (int) Math.ceil(newX);
+        } else {
+            finalX = (int) Math.floor(newX);
+        }
+
+        if (newY >= 0) {
+            finalY = (int) Math.ceil(newY);
+        } else {
+            finalY = (int) Math.floor(newY);
+        }
+
+        return new Vector2(finalX, finalY);
     }
 
     public Vector2 mul(Vector2 v) {
-        return new Vector2((int)(this.x * v.x), (int)(this.y * v.y));
+
+        double newX = this.x * v.x, newY = this.y * v.y;
+        int finalX, finalY;
+
+        if (newX >= 0) {
+            finalX = (int) Math.floor(newX);
+        } else {
+            finalX = (int) Math.ceil(newX);
+        }
+
+        if (newY >= 0) {
+            finalY = (int) Math.floor(newY);
+        } else {
+            finalY = (int) Math.ceil(newY);
+        }
+
+        return new Vector2(finalX, finalY);
     }
 
     public double dot(Vector2 v) {
