@@ -70,13 +70,14 @@ public class Game extends AbstractEngine {
 //        );
 //
 //        wall1.setMass(0.0);
-//
-//        wall2 = new PhysicsBody(root, "Wall", new Vector2(-45, 0));
-//        wall2.addChildren(
-//                new Collider(wall2, "Collider", new Vector2(0, 0), new AABB(new Vector2(10, 64)))
-//        );
-//
-//        wall2.setMass(0.0);
+
+        wall2 = new PhysicsBody(root, "Wall", new Vector2(-45, 0));
+        wall2.addChildren(
+                new Collider(wall2, "Collider", new Vector2(0, 0), new AABB(new Vector2(10, 64)))
+        );
+
+        wall2.setMass(0.0);
+        wall2.setColliding(false);
 
         // Setup CollisionSystem & PhysicsSystem
         root.addColliders(engine);
@@ -99,11 +100,14 @@ public class Game extends AbstractEngine {
             direction.x = -1;
         }
 
-        player.getVelocity().add(direction.mul(10 * delta).mul(300));
-
         if (engine.getInput().isKeyDown(KeyEvent.VK_W)) {
-            player.addForce(Vector2.UP.mul(100).mul(delta * 10));
+            player.addForce(Vector2.UP.mul(800).mul(delta * 10));
         }
+
+        if (player.getCollider().isCollidingWith(wall2.getCollider())) {
+            System.out.println("colliding with wall2");
+        }
+        player.setVelocity(new Vector2((int) (direction.x * 20), playerVelocity.y));
 
         if (engine.getInput().isKeyDown(KeyEvent.VK_NUMPAD1)) {
             System.out.println("===");

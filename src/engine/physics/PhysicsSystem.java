@@ -37,6 +37,9 @@ public class PhysicsSystem {
     }
 
     public void addBody(PhysicsBody body) {
+
+        if (body.isFrozen()) return;
+
         this.bodies.add(body);
         if (body.getMass() != 0.0) {
             this.forceRegistry.add(body, gravity);

@@ -135,12 +135,40 @@ public class IntersectionDetector {
             int penetrationY = Math.min(aY.y - bY.x, bY.y - aY.x);
             int penetrationX = Math.min(aX.y - bX.x, bX.y - aX.x);
 
-            Vector2 centerA = b1.getCenter();
-            Vector2 centerB = b2.getCenter();
+            //TODO: Uses angle to get normal
 
-            Vector2 centerToCenter = new Vector2(b1.getCenter().x - b2.getCenter().x, b1.getCenter().y - b2.getCenter().y);
+            double angle = getAngle(b1.getCenter().sub(b2.getCenter())) * -1;
 
-//            if (aY.x == bY.y || aY.y == bY.x) {
+            double angleTopRight = getAngle(b2.getMax().sub(b2.getCenter()));
+            double angleTopLeft = getAngle(new Vector2(b2.getMin().x, b2.getMax().y).sub(b2.getCenter()));
+            double angleBottomRight = getAngle(new Vector2(b2.getMax().x, b2.getMin().y).sub(b2.getCenter()));
+            double angleBottomLeft = getAngle(b2.getMin().sub(b2.getCenter()));
+
+            if (angle < 0) {
+
+                if (angle < angleBottomLeft) {
+                    setData(data, Vector2.LEFT, new Vector2(penetrationX, penetrationY));
+                } else if (angle > angleBottomRight) {
+                    setData(data, Vector2.RIGHT, new Vector2(penetrationX, penetrationY));
+                } else {
+                    setData(data, Vector2.DOWN, new Vector2(penetrationX, penetrationY));
+                }
+
+            } else {
+
+                if (angle < angleTopRight) {
+                    setData(data, Vector2.RIGHT, new Vector2(penetrationX, penetrationY));
+                } else if (angle > angleTopLeft) {
+                    setData(data, Vector2.LEFT, new Vector2(penetrationX, penetrationY));
+                } else {
+                    setData(data, Vector2.UP, new Vector2(penetrationX, penetrationY));
+                }
+            }
+
+
+            //TODO: Good take but breaks with gravity
+//            Vector2 centerToCenter = new Vector2(b1.getCenter().x - b2.getCenter().x, b1.getCenter().y - b2.getCenter().y);
+//            if (aY.x - bY.y == 0 || aY.y - bY.x == 0) {
 //                if (centerToCenter.y < 0) {
 //                    setData(data, Vector2.UP, new Vector2(penetrationX, penetrationY));
 //                } else {
@@ -154,16 +182,17 @@ public class IntersectionDetector {
 //                }
 //            }
 
-            if (centerToCenter.x < 0) {
-                setData(data, Vector2.LEFT, new Vector2(penetrationX, penetrationY));
-            } else {
-                setData(data, Vector2.RIGHT, new Vector2(penetrationX, penetrationY));
-            }
-            if (centerToCenter.y < 0) {
-                setData(data, Vector2.UP, new Vector2(penetrationX, penetrationY));
-            } else {
-                setData(data, Vector2.DOWN, new Vector2(penetrationX, penetrationY));
-            }
+            //TODO: Some crap
+//            if (centerToCenter.x <= 0) {
+//                setData(data, Vector2.LEFT, new Vector2(penetrationX, penetrationY));
+//            } else {
+//                setData(data, Vector2.RIGHT, new Vector2(penetrationX, penetrationY));
+//            }
+//            if (centerToCenter.y <= 0) {
+//                setData(data, Vector2.UP, new Vector2(penetrationX, penetrationY));
+//            } else {
+//                setData(data, Vector2.DOWN, new Vector2(penetrationX, penetrationY));
+//            }
 
             colliding = true;
         }
@@ -185,9 +214,10 @@ public class IntersectionDetector {
 
     }
 
-    private static boolean doIntervalContainsInterval(Vector2 i1, Vector2 i2) {
-        return i1.x >= i2.x && i1.y <= i2.y;
+    private static double getAngle(Vector2 v) {
+        return Math.atan2(v.y, v.x);
     }
+
 
     private static Vector2 getInterval(AABB aabb, Vector2 axis) {
         Vector2 min = aabb.getMin();
