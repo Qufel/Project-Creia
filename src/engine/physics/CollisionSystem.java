@@ -80,7 +80,7 @@ public class CollisionSystem {
                    }
 
                    aBody.setVelocity(aVelocity);
-                   aBody.setPosition(aBody.getPosition().add(data.normal.mul(penetration)));
+                   aBody.setPosition(aBody.getPosition().add(data.normal.mul(penetration + 1)));
 
                }
 
@@ -99,7 +99,7 @@ public class CollisionSystem {
                     }
 
                     bBody.setVelocity(bVelocity);
-                    bBody.setPosition(bBody.getPosition().add(data.normal.mul(penetration).mul(-1)));
+                    bBody.setPosition(bBody.getPosition().add(data.normal.mul(penetration + 1).mul(-1)));
 
                 }
 
@@ -112,40 +112,6 @@ public class CollisionSystem {
                 float impulseForce = (float) ((float) (-(1 + epsilon) * vN) / (data.normal.dot(data.normal) * (aBody.getInverseMass()) + bBody.getInverseMass()));
 
                 Vector2 impulseVector = data.normal.mul(impulseForce);
-//
-//                Vector2 aVelocity = aBody.getVelocity();
-//                Vector2 bVelocity = bBody.getVelocity();
-//
-//                Vector2 r1 = a.getAABB().getCenter().sub(data.point);
-//                Vector2 r2 = b.getAABB().getCenter().sub(data.point);
-//
-//                double constraint = b.getAABB().getCenter().add(r2).sub(a.getAABB().getCenter()).sub(r1).dot(data.normal);
-//                double constraintDiff = bVelocity.sub(aVelocity).dot(data.normal);
-//
-//                System.out.println(data.normal);
-
-//                aBody.setPosition(aBody.getPosition().sub(data.normal.mul(data.penetration).mul(aBody.getInverseMass())));
-//                bBody.setPosition(bBody.getPosition().add(data.normal.mul(data.penetration).mul(bBody.getInverseMass())));
-//
-//                engine.getPhysics().getForceRegistry().add(aBody, new ForceGenerator() {
-//                    @Override
-//                    public void updateForce(PhysicsBody body, float delta) {
-//                        body.addForce(impulseVector.mul(delta * 10).mul(body.getMass()));
-//                    }
-//                });
-//
-//                engine.getPhysics().getForceRegistry().add(bBody, new ForceGenerator() {
-//                    @Override
-//                    public void updateForce(PhysicsBody body, float delta) {
-//                        body.addForce(impulseVector.mul(delta * 10).mul(body.getMass()).mul(-1));
-//                    }
-//                });
-
-//                aBody.addForce(impulseVector.mul(aBody.getMass()));
-//                bBody.addForce(impulseVector.mul(aBody.getMass()).mul(-1));
-
-//                aBody.setVelocity(aVelocity.add(impulseVector.mul(aBody.getInverseMass())));
-//                bBody.setVelocity(bVelocity.sub(impulseVector.mul(bBody.getInverseMass())));
 
             }
 

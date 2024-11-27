@@ -19,7 +19,6 @@ public class PhysicsBody extends GameObject {
 
     private boolean collide = true; // If false ignore all collisions
     private boolean freeze = false; // Is body frozen in physics simulation i.e. is affected by physics
-    private boolean onGround = false;
 
     //region Getters & Setters
 
@@ -86,14 +85,6 @@ public class PhysicsBody extends GameObject {
         this.freeze = freeze;
     }
 
-    public void onGround(boolean onGround) {
-        this.onGround = onGround;
-    }
-
-    public boolean isOnGround() {
-        return onGround;
-    }
-
     //endregion
 
     public PhysicsBody(GameObject parent, String name, Vector2 position) {
@@ -112,10 +103,10 @@ public class PhysicsBody extends GameObject {
     }
 
 
-    @Override
-    public void decompose() {
-        super.decompose();
-    }
+//    @Override
+//    public void decompose() {
+//        super.decompose();
+//    }
 
     //region Forces
 

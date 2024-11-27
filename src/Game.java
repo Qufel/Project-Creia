@@ -1,4 +1,5 @@
 import engine.*;
+import engine.audio.AudioClip;
 import engine.graphics.*;
 import engine.objects.*;
 import engine.physics.Vector2;
@@ -10,14 +11,18 @@ import java.awt.event.KeyEvent;
 public class Game extends AbstractEngine {
 
     private Scene root;
+    private Scene trashcan;
 
     private PhysicsBody player;
-    private PhysicsBody platform1;
-    private PhysicsBody platform2;
-    private PhysicsBody platform3;
+    private StaticBody platform1;
+    private StaticBody platform2;
+    private StaticBody platform3;
 
-    private PhysicsBody wall1;
-    private PhysicsBody wall2;
+    private StaticBody coin;
+
+    private StaticBody respawnWall;
+
+    AudioClip coinPickup = new AudioClip("/res/audio/coin-pick.wav");
 
     public Game() {
 
@@ -26,6 +31,7 @@ public class Game extends AbstractEngine {
     @Override
     public void start(Engine engine) {
         root = new Scene("MainScene", new Vector2(engine.getWidth() / 2, engine.getHeight() / 2));
+        trashcan = new Scene("TrashCan", new Vector2(-2137, -2137));
 
         // Player setup
         player = new PhysicsBody(root, "Player", new Vector2(-64, 0));
@@ -35,53 +41,45 @@ public class Game extends AbstractEngine {
         );
 
         player.setMass(1.0);
+//        ( (SpriteObject) player.getChild("Sprite")).setRenderingLayer(RenderingLayer.PLAYER.ordinal());
 
         // Platform setup
-        platform1 = new PhysicsBody(root, "Platform1", new Vector2(-64, -40));
+        platform1 = new StaticBody(root, "Platform1", new Vector2(-64, -40));
         platform1.addChildren(
                 new SpriteObject(platform1, "Sprite", new Vector2(0, 0), new Sprite("/res/sprites/platform.png")),
                 new Collider(platform1, "Collider", new Vector2(0, 0), new AABB(new Vector2(48, 16)))
         );
-
-        platform1.setMass(0.0);
-
-        // Platform setup
-        platform2 = new PhysicsBody(root, "Platform2", new Vector2(0, 0));
+        platform2 = new StaticBody(root, "Platform2", new Vector2(0, 0));
         platform2.addChildren(
                 new SpriteObject(platform2, "Sprite", new Vector2(0, 0), new Sprite("/res/sprites/platform.png")),
                 new Collider(platform2, "Collider", new Vector2(0, 0), new AABB(new Vector2(48, 16)))
         );
-
-        platform2.setMass(0.0);
-
-
-        // Platform setup
-        platform3 = new PhysicsBody(root, "Platform3", new Vector2(-64, 40));
+        platform3 = new StaticBody(root, "Platform3", new Vector2(-64, 40));
         platform3.addChildren(
                 new SpriteObject(platform3, "Sprite", new Vector2(0, 0), new Sprite("/res/sprites/platform.png")),
                 new Collider(platform3, "Collider", new Vector2(0, 0), new AABB(new Vector2(48, 16)))
         );
 
-        platform3.setMass(0.0);
-
-//        wall1 = new PhysicsBody(root, "Wall", new Vector2(-83, 0));
-//        wall1.addChildren(
-//                new Collider(wall1, "Collider", new Vector2(0, 0), new AABB(new Vector2(10, 64)))
-//        );
-//
-//        wall1.setMass(0.0);
-
-        wall2 = new PhysicsBody(root, "Wall", new Vector2(-45, 0));
-        wall2.addChildren(
-                new Collider(wall2, "Collider", new Vector2(0, 0), new AABB(new Vector2(10, 64)))
+        respawnWall = new StaticBody(root, "RespawnWall", new Vector2(0, -200));
+        respawnWall.addChildren(
+                new Collider(respawnWall, "Collider", new Vector2(0, 0), new AABB(new Vector2(Integer.MAX_VALUE / 2, 2)))
         );
 
-        wall2.setMass(0.0);
-        wall2.setColliding(false);
+        respawnWall.setColliding(false);
+
+        coin = new StaticBody(root, "Coin", new Vector2(0, 20));
+        coin.addChildren(
+                new SpriteObject(coin, "Sprite", new Vector2(0, 0), new Sprite("/res/sprites/coin.png")),
+                new Collider(coin, "Collider", new Vector2(0, 0), new AABB(new Vector2(12, 12)))
+        );
+
+        coin.setColliding(false);
 
         // Setup CollisionSystem & PhysicsSystem
         root.addColliders(engine);
         root.addPhysicsBodies(engine);
+
+        coinPickup.setVolume(-15);
 
     }
 
@@ -90,6 +88,8 @@ public class Game extends AbstractEngine {
 
         ((AnimatedSprite) ((SpriteObject) player.getChild("Sprite")).getSprite()).setFramesDuration(200);
         ((AnimatedSprite) ((SpriteObject) player.getChild("Sprite")).getSprite()).play();
+
+        //region TEST Movement
 
         Vector2 direction = new Vector2(0, 0);
         Vector2 playerVelocity = player.getVelocity();
@@ -104,10 +104,52 @@ public class Game extends AbstractEngine {
             player.addForce(Vector2.UP.mul(800).mul(delta * 10));
         }
 
-        if (player.getCollider().isCollidingWith(wall2.getCollider())) {
-            System.out.println("colliding with wall2");
+        player.setVelocity(new Vector2((int) (direction.x * 10), playerVelocity.y));
+
+        //endregion
+
+        //region TEST Scene moving (Intro to Camera)
+
+        Vector2 cameraDir = new Vector2(0, 0);
+
+        if (engine.getInput().isKey(KeyEvent.VK_RIGHT)) {
+            cameraDir.x = -1;
+        } else if (engine.getInput().isKey(KeyEvent.VK_LEFT)) {
+            cameraDir.x = 1;
         }
-        player.setVelocity(new Vector2((int) (direction.x * 20), playerVelocity.y));
+
+        if (engine.getInput().isKey(KeyEvent.VK_UP)) {
+            cameraDir.y = 1;
+        } else if (engine.getInput().isKey(KeyEvent.VK_DOWN)) {
+            cameraDir.y = -1;
+        }
+
+        root.setPosition(root.getPosition().add(cameraDir.mul(delta * 10)));
+
+        //endregion
+
+        //region TEST Coin pickup
+
+        if (coin != null) {
+            if (player.getCollider().isCollidingWith(coin.getCollider())) {
+                if (!coinPickup.isPlaying()) {
+                    coinPickup.play();
+                }
+                coin.changeParent(trashcan);
+            }
+        }
+
+        //endregion
+
+        //region TEST Respawn
+
+        if (player.getCollider().isCollidingWith(respawnWall.getCollider())) {
+            player.setPosition(new Vector2(-64, 0));
+            player.setVelocity(new Vector2(0, 0));
+            player.clearForce();
+        }
+
+        //endregion
 
         if (engine.getInput().isKeyDown(KeyEvent.VK_NUMPAD1)) {
             System.out.println("===");
@@ -120,7 +162,7 @@ public class Game extends AbstractEngine {
 
     @Override
     public void render(Engine engine, Renderer renderer, float delta) {
-        root.renderScene(engine, renderer, delta, true);
+        root.renderScene(engine, renderer, delta, false);
 
         renderer.drawText(player.getGlobalPosition().toString(), engine.getWidth() - 50, 4, 0xffffffff);
 

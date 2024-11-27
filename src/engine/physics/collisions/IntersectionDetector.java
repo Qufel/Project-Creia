@@ -135,7 +135,7 @@ public class IntersectionDetector {
             int penetrationY = Math.min(aY.y - bY.x, bY.y - aY.x);
             int penetrationX = Math.min(aX.y - bX.x, bX.y - aX.x);
 
-            //TODO: Uses angle to get normal
+            // Uses angle to get a normal
 
             double angle = getAngle(b1.getCenter().sub(b2.getCenter())) * -1;
 
@@ -164,35 +164,6 @@ public class IntersectionDetector {
                     setData(data, Vector2.UP, new Vector2(penetrationX, penetrationY));
                 }
             }
-
-
-            //TODO: Good take but breaks with gravity
-//            Vector2 centerToCenter = new Vector2(b1.getCenter().x - b2.getCenter().x, b1.getCenter().y - b2.getCenter().y);
-//            if (aY.x - bY.y == 0 || aY.y - bY.x == 0) {
-//                if (centerToCenter.y < 0) {
-//                    setData(data, Vector2.UP, new Vector2(penetrationX, penetrationY));
-//                } else {
-//                    setData(data, Vector2.DOWN, new Vector2(penetrationX, penetrationY));
-//                }
-//            } else {
-//                if (centerToCenter.x < 0) {
-//                    setData(data, Vector2.LEFT, new Vector2(penetrationX, penetrationY));
-//                } else {
-//                    setData(data, Vector2.RIGHT, new Vector2(penetrationX, penetrationY));
-//                }
-//            }
-
-            //TODO: Some crap
-//            if (centerToCenter.x <= 0) {
-//                setData(data, Vector2.LEFT, new Vector2(penetrationX, penetrationY));
-//            } else {
-//                setData(data, Vector2.RIGHT, new Vector2(penetrationX, penetrationY));
-//            }
-//            if (centerToCenter.y <= 0) {
-//                setData(data, Vector2.UP, new Vector2(penetrationX, penetrationY));
-//            } else {
-//                setData(data, Vector2.DOWN, new Vector2(penetrationX, penetrationY));
-//            }
 
             colliding = true;
         }

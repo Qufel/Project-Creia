@@ -80,11 +80,17 @@ public class GameObject {
         return String.join("/", names);
     }
 
+    public void changeParent(GameObject newParent) {
+        if (newParent != null) {
+            this.parent = newParent;
+        }
+    }
+
     public void decompose() {
-        if (!children.isEmpty()) {
-            for (GameObject child : children) {
-                child.decompose();
-            }
+        for (GameObject child : children) {
+            child.decompose();
+            child = null;
+            children.remove(child);
         }
     }
 
