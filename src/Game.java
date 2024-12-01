@@ -11,7 +11,6 @@ import java.awt.event.KeyEvent;
 public class Game extends AbstractEngine {
 
     private Scene root;
-    private Scene trashcan;
 
     private PhysicsBody player;
     private StaticBody platform1;
@@ -31,7 +30,6 @@ public class Game extends AbstractEngine {
     @Override
     public void start(Engine engine) {
         root = new Scene("MainScene", new Vector2(engine.getWidth() / 2, engine.getHeight() / 2));
-        trashcan = new Scene("TrashCan", new Vector2(-2137, -2137));
 
         // Player setup
         player = new PhysicsBody(root, "Player", new Vector2(-64, 0));
@@ -41,6 +39,8 @@ public class Game extends AbstractEngine {
         );
 
         player.setMass(1.0);
+        ((AnimatedSprite) ((SpriteObject) player.getChild("Sprite")).getSprite()).setFramesDuration(200);
+
 //        ( (SpriteObject) player.getChild("Sprite")).setRenderingLayer(RenderingLayer.PLAYER.ordinal());
 
         // Platform setup
@@ -74,19 +74,21 @@ public class Game extends AbstractEngine {
         );
 
         coin.setColliding(false);
+//        player.setFreeze(true);
+        coinPickup.setVolume(-15);
 
         // Setup CollisionSystem & PhysicsSystem
         root.addColliders(engine);
         root.addPhysicsBodies(engine);
-
-        coinPickup.setVolume(-15);
 
     }
 
     @Override
     public void update(Engine engine, float delta) {
 
-        ((AnimatedSprite) ((SpriteObject) player.getChild("Sprite")).getSprite()).setFramesDuration(200);
+        if (engine.getInput().isKeyDown(KeyEvent.VK_NUMPAD5))
+            System.out.println("Manual stop");
+
         ((AnimatedSprite) ((SpriteObject) player.getChild("Sprite")).getSprite()).play();
 
         //region TEST Movement
@@ -108,26 +110,6 @@ public class Game extends AbstractEngine {
 
         //endregion
 
-        //region TEST Scene moving (Intro to Camera)
-
-        Vector2 cameraDir = new Vector2(0, 0);
-
-        if (engine.getInput().isKey(KeyEvent.VK_RIGHT)) {
-            cameraDir.x = -1;
-        } else if (engine.getInput().isKey(KeyEvent.VK_LEFT)) {
-            cameraDir.x = 1;
-        }
-
-        if (engine.getInput().isKey(KeyEvent.VK_UP)) {
-            cameraDir.y = 1;
-        } else if (engine.getInput().isKey(KeyEvent.VK_DOWN)) {
-            cameraDir.y = -1;
-        }
-
-        root.setPosition(root.getPosition().add(cameraDir.mul(delta * 10)));
-
-        //endregion
-
         //region TEST Coin pickup
 
         if (coin != null) {
@@ -135,7 +117,8 @@ public class Game extends AbstractEngine {
                 if (!coinPickup.isPlaying()) {
                     coinPickup.play();
                 }
-                coin.changeParent(trashcan);
+                coin.decompose();
+                coin = null;
             }
         }
 

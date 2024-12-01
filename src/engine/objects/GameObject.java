@@ -87,9 +87,9 @@ public class GameObject {
     }
 
     public void decompose() {
-        for (GameObject child : children) {
+        while(!this.children.isEmpty()) {
+            GameObject child = this.children.getFirst();
             child.decompose();
-            child = null;
             children.remove(child);
         }
     }

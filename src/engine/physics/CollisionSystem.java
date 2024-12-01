@@ -9,6 +9,7 @@ import engine.physics.forces.ForceGenerator;
 import engine.physics.forces.ForceRegistration;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.stream.Collectors;
 
 public class CollisionSystem {
@@ -39,8 +40,13 @@ public class CollisionSystem {
     public void update() {
 
         getPossiblePairs();
+//        sortByMinX();
+
+        previousPairs.clear();
 
         for (Pair pair : possiblePairs) {
+
+            if (pair.a.getAABB().getMin().x > pair.a.getAABB().getMax().x) continue;
 
             Collider a = pair.a;
             Collider b = pair.b;
@@ -104,24 +110,27 @@ public class CollisionSystem {
                 }
 
 
-                Vector2 vAB = aBody.getVelocity().sub(bBody.getVelocity());
-                double vN = vAB.dot(data.normal);
+//                Vector2 vAB = aBody.getVelocity().sub(bBody.getVelocity());
+//                double vN = vAB.dot(data.normal);
 
-                float epsilon = 0.2f;
+//                float epsilon = 0.2f;
 
-                float impulseForce = (float) ((float) (-(1 + epsilon) * vN) / (data.normal.dot(data.normal) * (aBody.getInverseMass()) + bBody.getInverseMass()));
+//                float impulseForce = (float) ((float) (-(1 + epsilon) * vN) / (data.normal.dot(data.normal) * (aBody.getInverseMass()) + bBody.getInverseMass()));
 
-                Vector2 impulseVector = data.normal.mul(impulseForce);
+//                Vector2 impulseVector = data.normal.mul(impulseForce);
 
             }
 
-            previousPairs.addAll(possiblePairs);
         }
 
+//        previousPairs.addAll(possiblePairs);
+        System.gc();
     }
 
     private ArrayList<Pair> getPossiblePairs() {
         possiblePairs = new ArrayList<>();
+
+        // TODO: Collision is checked even though objects are not close or are far away from each other.
 
         for (Collider a : colliders) {
             for (Collider b : colliders) {
@@ -132,7 +141,7 @@ public class CollisionSystem {
                 PhysicsBody bBody = (PhysicsBody) b.getParent();
 
                 Pair pair = new Pair(a, b);
-                if (previousPairs.contains(pair)) {
+                if (previousPairs.contains(pair) && !possiblePairs.contains(pair)) {
                     possiblePairs.add(previousPairs.get(previousPairs.indexOf(pair)));
                 }
 
@@ -150,26 +159,7 @@ public class CollisionSystem {
     }
 
     public void sortByMinX() {
-        int i = 1;
-        while (i < this.colliders.size()) {
-            int j = i;
-            while (j > 0) {
-                int aX = this.colliders.get(j - 1).getAABB().getMin().x;
-                int bX = this.colliders.get(j).getAABB().getMin().x;
-
-                if (aX > bX) {
-                    Collider tmp = this.colliders.get(j - 1);
-                    this.colliders.set(j - 1, this.colliders.get(j));
-                    this.colliders.set(j, tmp);
-
-                    j = j - 1;
-                } else {
-                    break;
-                }
-            }
-
-            i = i + 1;
-        }
+        colliders.sort(Comparator.comparingInt(collider -> collider.getGlobalPosition().x));
     }
 
 
@@ -191,5 +181,10 @@ class Pair {
         if (!(obj instanceof Pair pair)) return false;
 
         return (pair.a == this.a && pair.b == this.b) || (pair.a == this.b && pair.b == this.a);
+    }
+
+    @Override
+    public String toString() {
+        return "( " + a.toString() + ", " + b.toString() + " )";
     }
 }

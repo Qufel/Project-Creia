@@ -42,7 +42,7 @@ public class Engine implements Runnable {
         renderer = new Renderer(this);
         input = new Input(this);
         collision = new CollisionSystem(this);
-        physics = new PhysicsSystem((float) updateCap, new Vector2(0, -20));
+        physics = new PhysicsSystem((float) 1 / 60, new Vector2(0, -20));
 
         aEngine.start(this);
 
