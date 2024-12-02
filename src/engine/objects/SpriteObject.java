@@ -1,5 +1,6 @@
 package engine.objects;
 
+import engine.Engine;
 import engine.Renderer;
 import engine.graphics.AnimatedSprite;
 import engine.graphics.RenderingLayer;
@@ -35,6 +36,11 @@ public class SpriteObject extends GameObject {
         super(parent, name == null ? "Sprite" : name , position);
 
         this.sprite = sprite;
+    }
+
+    @Override
+    public void update(Engine engine, float delta) {
+
     }
 
     public void draw(Renderer renderer, float delta) {

@@ -1,5 +1,6 @@
 package engine.objects;
 
+import engine.Engine;
 import engine.physics.Vector2;
 
 import java.util.ArrayList;
@@ -64,6 +65,20 @@ public class GameObject {
 
         this.name = name;
         this.setPosition(position);
+    }
+
+    public void start(Engine engine) {
+        // It runs on the start of the game;
+        for (GameObject child : children) {
+            child.start(engine);
+        }
+    }
+
+    public void update(Engine engine, float delta) {
+        // It runs every frame
+        for (GameObject child : children) {
+            child.update(engine, delta);
+        }
     }
 
     @Override

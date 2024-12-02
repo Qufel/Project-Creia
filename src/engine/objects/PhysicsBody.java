@@ -1,5 +1,6 @@
 package engine.objects;
 
+import engine.Engine;
 import engine.physics.Vector2;
 
 import java.util.ArrayList;
@@ -101,12 +102,6 @@ public class PhysicsBody extends GameObject {
 
         clearForce();
     }
-
-
-//    @Override
-//    public void decompose() {
-//        super.decompose();
-//    }
 
     //region Forces
 

@@ -32,7 +32,30 @@ public class Game extends AbstractEngine {
         root = new Scene("MainScene", new Vector2(engine.getWidth() / 2, engine.getHeight() / 2));
 
         // Player setup
-        player = new PhysicsBody(root, "Player", new Vector2(-64, 0));
+        player = new PhysicsBody(root, "Player", new Vector2(-64, 0)) {
+            @Override
+            public void update(Engine engine, float delta) {
+                ((AnimatedSprite) ((SpriteObject) this.getChild("Sprite")).getSprite()).play();
+
+                Vector2 direction = new Vector2(0, 0);
+                Vector2 playerVelocity = this.getVelocity();
+
+                if (engine.getInput().isKey(KeyEvent.VK_D)) {
+                    direction.x = 1;
+                } else if (engine.getInput().isKey(KeyEvent.VK_A)) {
+                    direction.x = -1;
+                }
+
+                if (engine.getInput().isKeyDown(KeyEvent.VK_W)) {
+                    this.addForce(Vector2.UP.mul(800).mul(delta * 10));
+                }
+
+                this.setVelocity(new Vector2(direction.x * 10, playerVelocity.y));
+
+                super.update(engine, delta);
+            }
+        };
+
         player.addChildren(
                 new SpriteObject(player, "Sprite", new Vector2(0, 0), new AnimatedSprite("/res/sprites/animation.png", 16, 16)),
                 new Collider(player, "Collider", new Vector2(0, 0), new AABB(new Vector2(10, 16)))
@@ -67,7 +90,22 @@ public class Game extends AbstractEngine {
 
         respawnWall.setColliding(false);
 
-        coin = new StaticBody(root, "Coin", new Vector2(0, 20));
+        coin = new StaticBody(root, "Coin", new Vector2(0, 20)) {
+            @Override
+            public void update(Engine engine, float delta) {
+                if (coin != null) {
+                    if (player.getCollider().isCollidingWith(this.getCollider())) {
+                        if (!coinPickup.isPlaying()) {
+                            coinPickup.play();
+                        }
+                        this.decompose();
+                        coin = null;
+                    }
+                }
+
+                super.update(engine, delta);
+            }
+        };
         coin.addChildren(
                 new SpriteObject(coin, "Sprite", new Vector2(0, 0), new Sprite("/res/sprites/coin.png")),
                 new Collider(coin, "Collider", new Vector2(0, 0), new AABB(new Vector2(12, 12)))
@@ -80,6 +118,10 @@ public class Game extends AbstractEngine {
         root.addColliders(engine);
         root.addPhysicsBodies(engine);
 
+        for(GameObject object : root.getChildren()) {
+            object.start(engine);
+        }
+
     }
 
     @Override
@@ -87,41 +129,6 @@ public class Game extends AbstractEngine {
 
         if (engine.getInput().isKeyDown(KeyEvent.VK_NUMPAD5))
             System.out.println("Manual stop");
-
-        ((AnimatedSprite) ((SpriteObject) player.getChild("Sprite")).getSprite()).play();
-
-        //region TEST Movement
-
-        Vector2 direction = new Vector2(0, 0);
-        Vector2 playerVelocity = player.getVelocity();
-
-        if (engine.getInput().isKey(KeyEvent.VK_D)) {
-            direction.x = 1;
-        } else if (engine.getInput().isKey(KeyEvent.VK_A)) {
-            direction.x = -1;
-        }
-
-        if (engine.getInput().isKeyDown(KeyEvent.VK_W)) {
-            player.addForce(Vector2.UP.mul(800).mul(delta * 10));
-        }
-
-        player.setVelocity(new Vector2((int) (direction.x * 10), playerVelocity.y));
-
-        //endregion
-
-        //region TEST Coin pickup
-
-        if (coin != null) {
-            if (player.getCollider().isCollidingWith(coin.getCollider())) {
-                if (!coinPickup.isPlaying()) {
-                    coinPickup.play();
-                }
-                coin.decompose();
-                coin = null;
-            }
-        }
-
-        //endregion
 
         //region TEST Respawn
 
@@ -138,6 +145,9 @@ public class Game extends AbstractEngine {
             }
         }
 
+        for(GameObject object : root.getChildren()) {
+            object.update(engine, delta);
+        }
     }
 
     @Override
