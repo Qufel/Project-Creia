@@ -90,7 +90,6 @@ public class Scene extends GameObject {
         } else {
 
             // Render self and then continue for children
-
             renderObject(object, renderer, delta, debugColliders);
 
             for (GameObject child : object.getChildren()) {
@@ -102,34 +101,13 @@ public class Scene extends GameObject {
 
     private void renderObject(GameObject object, Renderer renderer, float delta, boolean debugColliders) {
         // Check if object should be visible if not don't render
-
-        if (!object.isVisible())
-            return;
+        if (!object.isVisible()) return;
 
         // Draw object if drawable
-
         if (object instanceof SpriteObject) {
             SpriteObject sprite = (SpriteObject) object;
             sprite.draw(renderer, delta);
         }
-
-        //region Debug
-
-        if (debugColliders) {
-            if (object instanceof Collider) {
-
-                AABB aabb = ((Collider) object).getAABB();
-                Vector2 center = new Vector2(aabb.getCenter()).sub(new Vector2(aabb.getSize()).mul(0.5));
-
-                int color = 0xff00ff00;
-                if (((Collider) object).isColliding())
-                    color = 0xffff0000;
-
-                renderer.drawRect(center.x, center.y, aabb.getSize().x - 1, aabb.getSize().y - 1, color);
-            }
-        }
-
-        //endregion
 
     }
 

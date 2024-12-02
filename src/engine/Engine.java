@@ -137,7 +137,7 @@ public class Engine implements Runnable {
     }
 
     private void dispose() {
-
+        System.gc();
     }
 
     //region Getters & Setters

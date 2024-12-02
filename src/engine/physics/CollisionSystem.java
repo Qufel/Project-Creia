@@ -42,7 +42,7 @@ public class CollisionSystem {
         getPossiblePairs();
 //        sortByMinX();
 
-        previousPairs.clear();
+//        previousPairs.clear();
 
         for (Pair pair : possiblePairs) {
 
@@ -133,17 +133,20 @@ public class CollisionSystem {
         // TODO: Collision is checked even though objects are not close or are far away from each other.
 
         for (Collider a : colliders) {
+            if (a == null) continue;
+
             for (Collider b : colliders) {
 
+                if (b == null) continue;
                 if (a.equals(b)) continue;
 
                 PhysicsBody aBody = (PhysicsBody) a.getParent();
                 PhysicsBody bBody = (PhysicsBody) b.getParent();
 
                 Pair pair = new Pair(a, b);
-                if (previousPairs.contains(pair) && !possiblePairs.contains(pair)) {
-                    possiblePairs.add(previousPairs.get(previousPairs.indexOf(pair)));
-                }
+//                if (previousPairs.contains(pair) && !possiblePairs.contains(pair)) {
+//                    possiblePairs.add(previousPairs.get(previousPairs.indexOf(pair)));
+//                }
 
                 if (aBody.equals(bBody)) continue;
                 if (aBody.getVelocity().equals(Vector2.ZERO) && bBody.getVelocity().equals(Vector2.ZERO)) continue;

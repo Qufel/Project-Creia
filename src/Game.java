@@ -74,7 +74,6 @@ public class Game extends AbstractEngine {
         );
 
         coin.setColliding(false);
-//        player.setFreeze(true);
         coinPickup.setVolume(-15);
 
         // Setup CollisionSystem & PhysicsSystem
@@ -128,8 +127,6 @@ public class Game extends AbstractEngine {
 
         if (player.getCollider().isCollidingWith(respawnWall.getCollider())) {
             player.setPosition(new Vector2(-64, 0));
-            player.setVelocity(new Vector2(0, 0));
-            player.clearForce();
         }
 
         //endregion
@@ -156,6 +153,7 @@ public class Game extends AbstractEngine {
     public static void main(String[] args) {
 
         Engine engine = new Engine(new Game());
+        engine.setTitle("Creia");
         engine.setScale(4f);
         
         engine.start();

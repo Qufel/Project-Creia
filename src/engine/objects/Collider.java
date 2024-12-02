@@ -23,7 +23,7 @@ public class Collider extends GameObject {
     @Override
     public void decompose() {
         collidingObjects.clear();
-
+        isColliding = false;
         super.decompose();
     }
 
