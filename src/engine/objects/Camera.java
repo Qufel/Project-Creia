@@ -7,6 +7,7 @@ public class Camera extends GameObject {
 
     private GameObject reference;
     private float speed = 1.0f;
+    private boolean current = true;
 
     //region Getters & Setters
 
@@ -26,6 +27,14 @@ public class Camera extends GameObject {
         return speed;
     }
 
+    public boolean isCurrent() {
+        return current;
+    }
+
+    public void setCurrent(boolean current) {
+        this.current = current;
+    }
+
     //endregion
 
     public Camera(GameObject parent, GameObject reference, String name) {
@@ -35,11 +44,13 @@ public class Camera extends GameObject {
 
     @Override
     public void update(Engine engine, float delta) {
-        followReference();
+        followReference(engine, delta);
         super.update(engine, delta);
     }
 
-    private void followReference() {
+    private void followReference(Engine engine, float delta) {
+        if (reference == null) return;
+
 
     }
 
