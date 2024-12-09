@@ -118,7 +118,6 @@ public class Engine implements Runnable {
                 // Render Game
                 aEngine.render(this, renderer, (float)updateCap);
                 renderer.process();
-                renderer.drawText("FPS: " + fps , 4, 4, 0xffffffff);
 
                 window.update();
                 frames++;

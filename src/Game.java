@@ -12,7 +12,7 @@ public class Game extends AbstractEngine {
 
     private Scene root = new Scene("MainScene", new Vector2(0, 0));
 
-    private PhysicsBody player = new PhysicsBody(root, "Player", new Vector2(-64, 0)) {
+    private PhysicsBody player = new PhysicsBody(root, "Player", new Vector2(0, 0)) {
 
         @Override
         public void start(Engine engine) {
@@ -54,7 +54,7 @@ public class Game extends AbstractEngine {
 
     private Camera camera = new Camera(root, player, "Camera");
 
-    private StaticBody coin = new StaticBody(root, "Coin", new Vector2(0, 20)) {
+    private StaticBody coin = new StaticBody(root, "Coin", new Vector2(128, 20)) {
 
         @Override
         public void start(Engine engine) {
@@ -109,7 +109,7 @@ public class Game extends AbstractEngine {
 
         // TEST Factory of Platforms TODO: Implement class ObjectFactory
         int count = 5; // Platforms count
-        Vector2 startPos = new Vector2(-78, -40);
+        Vector2 startPos = new Vector2(0, -40);
         Vector2 offset = Vector2.ZERO;
 
         for (int i = 0; i < count; i++) {
@@ -127,7 +127,7 @@ public class Game extends AbstractEngine {
             };
             root.addChildren(platform);
 
-            offset = offset.add(new Vector2(78, 0));
+            offset = offset.add(new Vector2(64, -16));
         }
 
 
@@ -151,7 +151,7 @@ public class Game extends AbstractEngine {
         //region TEST Respawn
 
         if (player.getCollider().isCollidingWith(respawnWall.getCollider())) {
-            player.setPosition(new Vector2(-64, 0));
+            player.setPosition(new Vector2(0, 0));
         }
 
         //endregion
@@ -176,10 +176,11 @@ public class Game extends AbstractEngine {
     public void render(Engine engine, Renderer renderer, float delta) {
         root.renderScene(engine, renderer, delta, false);
 
-        renderer.drawText(player.getGlobalPosition().toString(), engine.getWidth() - 50, 4, 0xffffffff);
+        renderer.drawText("FPS: " + engine.getFramesPerSecond() , 4 + renderer.getCamera().x, 4+ renderer.getCamera().y, 0xffffffff);
+        renderer.drawText(player.getGlobalPosition().toString(), engine.getWidth() - 50 + renderer.getCamera().x, 4 + renderer.getCamera().y, 0xffffffff);
 
-        renderer.drawText("Velocity: " + player.getVelocity(), 4, engine.getHeight() - 20, 0xffffffff);
-        renderer.drawText("Acceleration: " + player.getAcceleration(), 4, engine.getHeight() - 10, 0xffffffff);
+        renderer.drawText("Velocity: " + player.getVelocity(), 4 + renderer.getCamera().x, engine.getHeight() - 20 + renderer.getCamera().y, 0xffffffff);
+        renderer.drawText("Acceleration: " + player.getAcceleration(), 4 + renderer.getCamera().x, engine.getHeight() - 10 + renderer.getCamera().y, 0xffffffff);
   }
 
     public static void main(String[] args) {
