@@ -7,13 +7,24 @@ import engine.physics.shapes.AABB;
 
 public class Scene extends GameObject {
 
+    private Vector2 origin;
+
+    public Vector2 getOrigin() {
+        return origin;
+    }
+
+    public void setOrigin(Vector2 origin) {
+        this.origin = origin;
+    }
+
     public Scene(String name, Vector2 position) {
         super(null, name, position);
+        this.origin = position;
     }
 
     /// TODO: Scene functionality
     /// - Object hierarchy
-    /// - Object rendering
+    /// - Object rendering - Done
 
     //region Physics & Collision management
 

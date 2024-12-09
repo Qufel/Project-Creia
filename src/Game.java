@@ -52,6 +52,8 @@ public class Game extends AbstractEngine {
         }
     };
 
+    private Camera camera = new Camera(root, player, "Camera");
+
     private StaticBody coin = new StaticBody(root, "Coin", new Vector2(0, 20)) {
 
         @Override
@@ -104,7 +106,6 @@ public class Game extends AbstractEngine {
 
     @Override
     public void start(Engine engine) {
-        root.setPosition(new Vector2(engine.getWidth() / 2, engine.getHeight() / 2));
 
         // TEST Factory of Platforms TODO: Implement class ObjectFactory
         int count = 5; // Platforms count
@@ -164,8 +165,11 @@ public class Game extends AbstractEngine {
 
         // Run update for all objects in scene
         for(GameObject object : root.getChildren()) {
+            if (object instanceof Camera) continue;
             object.update(engine, delta);
         }
+
+        camera.update(engine, delta);
     }
 
     @Override

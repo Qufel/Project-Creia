@@ -146,6 +146,8 @@ public class Engine implements Runnable {
         return window;
     }
 
+    public Renderer getRenderer() { return renderer; }
+
     public Input getInput() {
         return input;
     }

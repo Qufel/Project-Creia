@@ -4,6 +4,7 @@ import engine.graphics.AnimatedSprite;
 import engine.graphics.Font;
 import engine.graphics.Sprite;
 import engine.graphics.SpriteRequest;
+import engine.physics.Vector2;
 
 import java.awt.image.DataBufferInt;
 import java.util.ArrayList;
@@ -21,6 +22,8 @@ public class Renderer {
 
     private Font font = Font.STANDARD;
     private ArrayList<SpriteRequest> spriteRequests = new ArrayList<SpriteRequest>();
+
+    private Vector2 camera = Vector2.ZERO;
 
     private final int BACKGROUND_COLOR = 0xff000000;
 
@@ -111,6 +114,9 @@ public class Renderer {
             return;
         }
 
+        offX -= camera.x;
+        offY -= camera.y;
+
         int newX = 0, newY = 0;
         int newWidth = sprite.getWidth();
         int newHeight = sprite.getHeight();
@@ -186,6 +192,9 @@ public class Renderer {
     public void drawText(String text, int offX, int offY, int color) {
         int offset = 0;
 
+        offX -= camera.x;
+        offY -= camera.y;
+
         for (int i = 0; i < text.length(); i++) {
 
             int unicode = text.codePointAt(i) - 32;
@@ -256,5 +265,13 @@ public class Renderer {
 
     public void setRenderingDepth(int renderingDepth) {
         this.renderingDepth = renderingDepth;
+    }
+
+    public Vector2 getCamera() {
+        return camera;
+    }
+
+    public void setCamera(Vector2 camera) {
+        this.camera = camera;
     }
 }
