@@ -1,23 +1,20 @@
 package engine.physics;
 
+import engine.EMath;
 import engine.Engine;
 import engine.objects.Collider;
 import engine.objects.PhysicsBody;
 import engine.physics.collisions.CollisionData;
 import engine.physics.collisions.IntersectionDetector;
-import engine.physics.forces.ForceGenerator;
-import engine.physics.forces.ForceRegistration;
 
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.stream.Collectors;
 
 public class CollisionSystem {
 
     private Engine engine;
 
     private ArrayList<Collider> colliders;
-    private ArrayList<Pair> previousPairs = new ArrayList<Pair>();
     private ArrayList<Pair> possiblePairs = new ArrayList<Pair>();
 
     //region Getters & Setters
@@ -40,9 +37,6 @@ public class CollisionSystem {
     public void update() {
 
         getPossiblePairs();
-//        sortByMinX();
-
-//        previousPairs.clear();
 
         for (Pair pair : possiblePairs) {
 
@@ -73,6 +67,8 @@ public class CollisionSystem {
 
                if (aBody.getMass() != 0 && bBody.isColliding()) {
 
+                   aBody.setPosition(aBody.getPosition().add(data.normal.mul(penetration + 1)));
+
                    Vector2 aVelocity = aBody.getVelocity();
 
                    int aVDot = (int) aVelocity.dot(data.normal);
@@ -85,12 +81,21 @@ public class CollisionSystem {
                        aVelocity.x = 0;
                    }
 
+                   int acc = EMath.ceilFloor(data.normal.dot(aBody.getAcceleration()));
+
+                   if (data.normal == Vector2.UP || data.normal == Vector2.RIGHT)
+                       acc = Math.clamp(acc, 0, Integer.MAX_VALUE);
+                   else if (data.normal == Vector2.DOWN || data.normal == Vector2.LEFT)
+                       acc = Math.clamp(acc, Integer.MIN_VALUE, 0);
+
+                   aBody.setAcceleration(aBody.getAcceleration().mul(acc));
                    aBody.setVelocity(aVelocity);
-                   aBody.setPosition(aBody.getPosition().add(data.normal.mul(penetration + 1)));
 
                }
 
                 if (bBody.getMass() != 0 && aBody.isColliding()) {
+
+                    bBody.setPosition(bBody.getPosition().add(data.normal.mul(penetration + 1).mul(-1)));
 
                     Vector2 bVelocity = bBody.getVelocity();
 
@@ -104,26 +109,22 @@ public class CollisionSystem {
                         bVelocity.x = 0;
                     }
 
+                    int acc = EMath.ceilFloor(data.normal.dot(bBody.getAcceleration()));
+
+                    if (data.normal == Vector2.UP || data.normal == Vector2.RIGHT)
+                        acc = Math.clamp(acc, 0, Integer.MAX_VALUE);
+                    else if (data.normal == Vector2.DOWN || data.normal == Vector2.LEFT)
+                        acc = Math.clamp(acc, Integer.MIN_VALUE, 0);
+
+                    bBody.setAcceleration(bBody.getAcceleration().mul(acc));
                     bBody.setVelocity(bVelocity);
-                    bBody.setPosition(bBody.getPosition().add(data.normal.mul(penetration + 1).mul(-1)));
 
                 }
-
-
-//                Vector2 vAB = aBody.getVelocity().sub(bBody.getVelocity());
-//                double vN = vAB.dot(data.normal);
-
-//                float epsilon = 0.2f;
-
-//                float impulseForce = (float) ((float) (-(1 + epsilon) * vN) / (data.normal.dot(data.normal) * (aBody.getInverseMass()) + bBody.getInverseMass()));
-
-//                Vector2 impulseVector = data.normal.mul(impulseForce);
 
             }
 
         }
 
-//        previousPairs.addAll(possiblePairs);
         System.gc();
     }
 
@@ -144,9 +145,6 @@ public class CollisionSystem {
                 PhysicsBody bBody = (PhysicsBody) b.getParent();
 
                 Pair pair = new Pair(a, b);
-//                if (previousPairs.contains(pair) && !possiblePairs.contains(pair)) {
-//                    possiblePairs.add(previousPairs.get(previousPairs.indexOf(pair)));
-//                }
 
                 if (aBody.equals(bBody)) continue;
                 if (aBody.getVelocity().equals(Vector2.ZERO) && bBody.getVelocity().equals(Vector2.ZERO)) continue;

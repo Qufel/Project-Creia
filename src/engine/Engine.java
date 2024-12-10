@@ -17,7 +17,7 @@ public class Engine implements Runnable {
 
     private boolean running = false;
 
-    public final boolean UNCAPPED_FPS = true;
+    public final boolean UNCAPPED_FPS = false;
     private final double FRAMES_CAP = 60.0;
     private double updateCap = 1.0/FRAMES_CAP;
 

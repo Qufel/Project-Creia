@@ -10,7 +10,7 @@ import java.awt.event.KeyEvent;
 
 public class Game extends AbstractEngine {
 
-    private Scene root = new Scene("MainScene", new Vector2(0, 0));
+    private Scene root = new Scene("MainScene", new Vector2(5000, 5000));
 
     private PhysicsBody player = new PhysicsBody(root, "Player", new Vector2(0, 0)) {
 
@@ -25,7 +25,7 @@ public class Game extends AbstractEngine {
 
             setMass(1.0);
             ((AnimatedSprite) ((SpriteObject) getChild("Sprite")).getSprite()).setFramesDuration(200);
-
+            ((SpriteObject) getChild("Sprite")).setRenderingLayer(RenderingLayer.PLAYER.ordinal());
             super.start(engine);
         }
 
@@ -107,7 +107,7 @@ public class Game extends AbstractEngine {
     @Override
     public void start(Engine engine) {
 
-        // TEST Factory of Platforms TODO: Implement class ObjectFactory
+        //region TEST Factory of Platforms TODO: Implement class ObjectFactory
         int count = 5; // Platforms count
         Vector2 startPos = new Vector2(0, -40);
         Vector2 offset = Vector2.ZERO;
@@ -127,9 +127,9 @@ public class Game extends AbstractEngine {
             };
             root.addChildren(platform);
 
-            offset = offset.add(new Vector2(64, -16));
+            offset = offset.add(new Vector2(64, 16));
         }
-
+        //endregion
 
         // Run start for all objects in scene
         for(GameObject object : root.getChildren()) {
@@ -156,19 +156,13 @@ public class Game extends AbstractEngine {
 
         //endregion
 
-        if (engine.getInput().isKeyDown(KeyEvent.VK_NUMPAD1)) {
-            System.out.println("===");
-            for (GameObject object : player.getCollider().getCollidingObjects()) {
-                System.out.println("- " + object);
-            }
-        }
-
         // Run update for all objects in scene
         for(GameObject object : root.getChildren()) {
             if (object instanceof Camera) continue;
             object.update(engine, delta);
         }
 
+        // Update camera after all other objects have been updated
         camera.update(engine, delta);
     }
 
@@ -177,8 +171,6 @@ public class Game extends AbstractEngine {
         root.renderScene(engine, renderer, delta, false);
 
         renderer.drawText("FPS: " + engine.getFramesPerSecond() , 4 + renderer.getCamera().x, 4+ renderer.getCamera().y, 0xffffffff);
-        renderer.drawText(player.getGlobalPosition().toString(), engine.getWidth() - 50 + renderer.getCamera().x, 4 + renderer.getCamera().y, 0xffffffff);
-
         renderer.drawText("Velocity: " + player.getVelocity(), 4 + renderer.getCamera().x, engine.getHeight() - 20 + renderer.getCamera().y, 0xffffffff);
         renderer.drawText("Acceleration: " + player.getAcceleration(), 4 + renderer.getCamera().x, engine.getHeight() - 10 + renderer.getCamera().y, 0xffffffff);
   }
@@ -187,6 +179,10 @@ public class Game extends AbstractEngine {
 
         Engine engine = new Engine(new Game());
         engine.setTitle("Creia");
+
+        engine.setHeight(150);
+        engine.setWidth(300);
+
         engine.setScale(4f);
         
         engine.start();
