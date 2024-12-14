@@ -25,7 +25,7 @@ public class Renderer {
 
     private Vector2 camera = Vector2.ZERO;
 
-    private final int BACKGROUND_COLOR = 0xff000000;
+    private final int BACKGROUND_COLOR = 0xff8db7ff;
 
     public Renderer(Engine engine) {
 

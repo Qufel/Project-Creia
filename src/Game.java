@@ -7,10 +7,11 @@ import engine.physics.forces.ForceGenerator;
 import engine.physics.shapes.AABB;
 
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseWheelEvent;
 
 public class Game extends AbstractEngine {
 
-    private Scene root = new Scene("MainScene", new Vector2(5000, 5000));
+    private Scene root = new Scene("MainScene", new Vector2(4096, 4096));
 
     private PhysicsBody player = new PhysicsBody(root, "Player", new Vector2(0, 0)) {
 
@@ -100,6 +101,9 @@ public class Game extends AbstractEngine {
 
     AudioClip coinPickup = new AudioClip("/res/audio/coin-pick.wav");
 
+    private Tileset tileset = new Tileset("/res/sprites/tileset.png", 16, 16);
+
+    private SpriteObject test = new SpriteObject(root, "test", new Vector2(10, -24), new Sprite(tileset.getTile(0), 16, 16, false, false));
     public Game() {
 
     }
@@ -131,6 +135,7 @@ public class Game extends AbstractEngine {
         }
         //endregion
 
+
         // Run start for all objects in scene
         for(GameObject object : root.getChildren()) {
             object.start(engine);
@@ -142,8 +147,17 @@ public class Game extends AbstractEngine {
 
     }
 
+    int tile = 0;
+
     @Override
     public void update(Engine engine, float delta) {
+
+//        System.out.println(engine.getInput().getMouseX() + " x " + engine.getInput().getMouseY());
+
+        if (engine.getInput().isKeyDown(KeyEvent.VK_UP)) {
+            tile++;
+            test.setSprite(new Sprite(tileset.getTile(tile), 16, 16, false, false));
+        }
 
         if (engine.getInput().isKeyDown(KeyEvent.VK_NUMPAD5))
             System.out.println("Manual stop");
