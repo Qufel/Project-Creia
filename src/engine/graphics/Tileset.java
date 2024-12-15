@@ -47,14 +47,16 @@ public class Tileset {
         for (int c = 0; c < columns; c++) {
             for (int r = 0; r < rows; r++) {
 
-                int id = c * (r + 1);
+                int id = c + r * columns;
 
                 int[] pixels = image.getRGB(0, 0, columns * cWidth, rows * cHeight, null, 0, columns * cWidth);
+
+                int start = r * cHeight * (columns * cWidth) + c * cWidth + 1;
 
                 for (int y = 0; y < cWidth; y++) {
                     for (int x = 0; x < cHeight; x++) {
 
-                        int pixel = pixels[y * (cWidth * columns - c * cWidth) + x + c * cWidth];
+                        int pixel = pixels[start + x + y * (columns * cWidth) - 1];
 
                         tiles[id][y * cWidth + x] = pixel;
 
