@@ -3,11 +3,9 @@ import engine.audio.AudioClip;
 import engine.graphics.*;
 import engine.objects.*;
 import engine.physics.Vector2;
-import engine.physics.forces.ForceGenerator;
 import engine.physics.shapes.AABB;
 
 import java.awt.event.KeyEvent;
-import java.awt.event.MouseWheelEvent;
 
 public class Game extends AbstractEngine {
 
@@ -19,20 +17,20 @@ public class Game extends AbstractEngine {
         public void start(Engine engine) {
 
             addChildren(
-                    new SpriteObject(player, "Sprite", new Vector2(0, 0), new AnimatedSprite("/res/sprites/animation.png", 16, 16)),
+                    new Sprite2D(player, "Sprite", new Vector2(0, 0), new AnimatedSprite("/res/sprites/animation.png", 16, 16)),
                     new Collider(player, "Collider", new Vector2(0, 0), new AABB(new Vector2(10, 16)))
             );
 
 
             setMass(1.0);
-            ((AnimatedSprite) ((SpriteObject) getChild("Sprite")).getSprite()).setFramesDuration(200);
-            ((SpriteObject) getChild("Sprite")).setRenderingLayer(RenderingLayer.PLAYER.ordinal());
+            ((AnimatedSprite) ((Sprite2D) getChild("Sprite")).getSprite()).setFramesDuration(200);
+            ((Sprite2D) getChild("Sprite")).setRenderingLayer(RenderingLayer.PLAYER.ordinal());
             super.start(engine);
         }
 
         @Override
         public void update(Engine engine, float delta) {
-            ((AnimatedSprite) ((SpriteObject) this.getChild("Sprite")).getSprite()).play();
+            ((AnimatedSprite) ((Sprite2D) this.getChild("Sprite")).getSprite()).play();
 
             Vector2 direction = new Vector2(0, 0);
             Vector2 playerVelocity = this.getVelocity();
@@ -61,7 +59,7 @@ public class Game extends AbstractEngine {
         public void start(Engine engine) {
 
             this.addChildren(
-                    new SpriteObject(coin, "Sprite", new Vector2(0, 0), new Sprite("/res/sprites/coin.png")),
+                    new Sprite2D(coin, "Sprite", new Vector2(0, 0), new Sprite("/res/sprites/coin.png")),
                     new Collider(coin, "Collider", new Vector2(0, 0), new AABB(new Vector2(12, 12)))
             );
 
@@ -99,17 +97,20 @@ public class Game extends AbstractEngine {
 
     };
 
-    AudioClip coinPickup = new AudioClip("/res/audio/coin-pick.wav");
+    private AudioClip coinPickup = new AudioClip("/res/audio/coin-pick.wav");
 
     private Tileset tileset = new Tileset("/res/sprites/tileset.png", 16, 16);
 
-    private SpriteObject test = new SpriteObject(root, "test", new Vector2(10, -24), new Sprite(tileset.getTile(0), 16, 16, false, false));
+    private Tilemap tilemap = new Tilemap(root, "TM_Walkable", Vector2.ZERO, tileset, "src/res/tmWalkable.csv", false);
+
     public Game() {
 
     }
 
     @Override
     public void start(Engine engine) {
+
+        System.out.println(tilemap.getTileIdAt(5, 6));
 
         //region TEST Factory of Platforms TODO: Implement class ObjectFactory
         int count = 5; // Platforms count
@@ -123,7 +124,7 @@ public class Game extends AbstractEngine {
                 public void start(Engine engine) {
                     addChildren(
                             new Collider(this, "Collider", Vector2.ZERO, new AABB(new Vector2(48, 16))),
-                            new SpriteObject(this, "Sprite", Vector2.ZERO, new Sprite("/res/sprites/platform.png"))
+                            new Sprite2D(this, "Sprite", Vector2.ZERO, new Sprite("/res/sprites/platform.png"))
                     );
                     setMass(0.0f);
                 }
@@ -134,7 +135,6 @@ public class Game extends AbstractEngine {
             offset = offset.add(new Vector2(64, 16));
         }
         //endregion
-
 
         // Run start for all objects in scene
         for(GameObject object : root.getChildren()) {
@@ -147,17 +147,8 @@ public class Game extends AbstractEngine {
 
     }
 
-    int tile = 0;
-
     @Override
     public void update(Engine engine, float delta) {
-
-//        System.out.println(engine.getInput().getMouseX() + " x " + engine.getInput().getMouseY());
-
-        if (engine.getInput().isKeyDown(KeyEvent.VK_UP)) {
-            tile++;
-            test.setSprite(new Sprite(tileset.getTile(tile), 16, 16, false, false));
-        }
 
         if (engine.getInput().isKeyDown(KeyEvent.VK_NUMPAD5))
             System.out.println("Manual stop");

@@ -3,7 +3,6 @@ package engine.objects;
 import engine.Engine;
 import engine.Renderer;
 import engine.physics.Vector2;
-import engine.physics.shapes.AABB;
 
 public class Scene extends GameObject {
 
@@ -115,8 +114,8 @@ public class Scene extends GameObject {
         if (!object.isVisible()) return;
 
         // Draw object if drawable
-        if (object instanceof SpriteObject) {
-            SpriteObject sprite = (SpriteObject) object;
+        if (object instanceof Sprite2D) {
+            Sprite2D sprite = (Sprite2D) object;
             sprite.draw(renderer, delta);
         }
 

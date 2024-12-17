@@ -7,7 +7,7 @@ import engine.graphics.RenderingLayer;
 import engine.graphics.Sprite;
 import engine.physics.Vector2;
 
-public class SpriteObject extends GameObject {
+public class Sprite2D extends GameObject {
 
     private Sprite sprite; // Sprite or AnimatedSprite
     private int renderingLayer = RenderingLayer.BACKGROUND.ordinal();
@@ -32,7 +32,7 @@ public class SpriteObject extends GameObject {
 
     //endregion
 
-    public SpriteObject(GameObject parent, String name, Vector2 position, Sprite sprite) {
+    public Sprite2D(GameObject parent, String name, Vector2 position, Sprite sprite) {
         super(parent, name == null ? "Sprite" : name , position);
 
         this.sprite = sprite;
