@@ -110,11 +110,11 @@ public class Game extends AbstractEngine {
     @Override
     public void start(Engine engine) {
 
-        System.out.println(tilemap.getTileIdAt(5, 6));
+//        System.out.println(tilemap.getTileIdAt(5, 6));
 
         //region TEST Factory of Platforms TODO: Implement class ObjectFactory
-        int count = 5; // Platforms count
-        Vector2 startPos = new Vector2(0, -40);
+        int count = 1; // Platforms count
+        Vector2 startPos = new Vector2(0, 0);
         Vector2 offset = Vector2.ZERO;
 
         for (int i = 0; i < count; i++) {

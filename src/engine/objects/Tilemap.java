@@ -91,8 +91,8 @@ public class Tilemap extends StaticBody {
             // Initialize collisionMap[x][y]
             collisionMap = new int[width][height];
 
-            for (int x = 0; x < width; x++) {
-                for (int y = 0; y < height; y++) {
+            for (int y = 0; y < height; y++) {
+                for (int x = 0; x < width; x++) {
                     int id = ids.get(y * width + x); // Get tile id at (x, y)
 
                     // Assign id value at (x, y) position in tiles array.
@@ -121,10 +121,7 @@ public class Tilemap extends StaticBody {
     }
 
     private void createSprites() {
-        Sprite[] sprites;
-
         // Get count of how many sprites to generate
-
         int countX = Math.floorDiv(this.width, MAX_TILES);
         int countY = Math.floorDiv(this.height, MAX_TILES);
 
@@ -134,12 +131,10 @@ public class Tilemap extends StaticBody {
         if (this.height - countY * MAX_TILES> 0)
             countY++;
 
-        sprites = new Sprite[countX * countY];
-
         for (int y = 0; y < countY; y++) {
             for (int x = 0; x < countX; x++) {
 
-                // Determine width and height of each sprite
+                // Determine width and height of each cluster (sprite)
                 int width = MAX_TILES;
                 int height = MAX_TILES;
 
@@ -149,15 +144,28 @@ public class Tilemap extends StaticBody {
                 if (height * (y + 1) > this.height)
                     height = this.height - MAX_TILES * y;
 
-                // Create sprite
+                // Create cluster (sprite)
                 int[] pixels = createPixelArray(x, y, width, height);
-                sprites[y * (countX) + x] = new Sprite(pixels, width, height, false, false);
+                Sprite sprite = new Sprite(pixels, tileset.getCellWidth() * width, tileset.getCellHeight() * height, false, false);
 
-                for (Sprite sprite : sprites) {
-                    this.addChildren(
-                            new Sprite2D(this, "Sprite_" + x + "_" + y, Vector2.ZERO, sprite)
-                    );
-                }
+                Vector2 position = Vector2.ZERO;
+
+                // Determine position of cluster
+                Vector2 clusterCenter = new Vector2(
+                        x * (MAX_TILES * tileset.getCellWidth()) + width * tileset.getCellWidth() / 2,
+                        y * (MAX_TILES * tileset.getCellHeight()) + height * tileset.getCellHeight() / 2
+                );
+
+                Vector2 corner = new Vector2(
+                        (-getWidth() * MAX_TILES) / 2,
+                        (getHeight() * MAX_TILES) / 2
+                );
+
+                position = clusterCenter.sub(corner);
+
+                this.addChildren(
+                        new Sprite2D(this, "Sprite_" + x + "_" + y, position, sprite)
+                );
 
             }
         }
@@ -172,17 +180,8 @@ public class Tilemap extends StaticBody {
             for (int j = 0; j < width; j++) {
 
                 // Get offset values for each tile
-                int offsetX, offsetY;
-
-                if (width < MAX_TILES)
-                    offsetX = this.width - width - 1;
-                else
-                    offsetX = xCoord * width;
-
-                if (height < MAX_TILES)
-                    offsetY = this.height - height - 1;
-                else
-                    offsetY = yCoord * height;
+                int offsetX = xCoord * MAX_TILES;
+                int offsetY = yCoord * MAX_TILES;
 
                 // Get tile id
                 int tile = getTileIdAt(j + offsetX, i + offsetY);
@@ -199,8 +198,9 @@ public class Tilemap extends StaticBody {
                 for (int y = 0; y < cellH; y++) {
                     for (int x = 0; x < cellW; x++) {
 
-                        int index = indexAt(x, y, i, j);
+                        int index = indexAt(x, y, i, j, width);
                         pixels[index] = tilePixels[y * cellW + x];
+
                     }
                 }
 
@@ -211,8 +211,10 @@ public class Tilemap extends StaticBody {
         return pixels;
     }
 
-    private int indexAt(int x, int y, int i, int j) {
+    private int indexAt(int x, int y, int i, int j, int w) {
         int cellW = tileset.getCellWidth(), cellH = tileset.getCellHeight();
-        return y * (((cellW * width) - ((width - 1) * cellW))) + i * cellW + (y * cellW + x) + j * cellH * (width * cellW);
+        return (i * cellH + y) * (w * cellW) + (j * cellW + x);
+
+//        return y * ((cellW * w - ((w - 1) * cellW))) + i * cellW + (y * cellW + x) + j * cellH * (w * cellW);
     }
 }
