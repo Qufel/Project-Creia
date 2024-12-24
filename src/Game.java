@@ -11,7 +11,7 @@ public class Game extends AbstractEngine {
 
     private Scene root = new Scene("MainScene", new Vector2(4096, 4096));
 
-    private PhysicsBody player = new PhysicsBody(root, "Player", new Vector2(0, 0)) {
+    private PhysicsBody player = new PhysicsBody(root, "Player", new Vector2(0, 40)) {
 
         @Override
         public void start(Engine engine) {
@@ -84,7 +84,7 @@ public class Game extends AbstractEngine {
         }
     };;
 
-    private StaticBody respawnWall = new StaticBody(root, "RespawnWall", new Vector2(0, -200)) {
+    private StaticBody respawnWall = new StaticBody(root, "RespawnWall", new Vector2(0, -600)) {
 
         @Override
         public void start(Engine engine) {
@@ -114,7 +114,7 @@ public class Game extends AbstractEngine {
 
         //region TEST Factory of Platforms TODO: Implement class ObjectFactory
         int count = 1; // Platforms count
-        Vector2 startPos = new Vector2(0, 0);
+        Vector2 startPos = Vector2.ZERO;
         Vector2 offset = Vector2.ZERO;
 
         for (int i = 0; i < count; i++) {
@@ -131,8 +131,6 @@ public class Game extends AbstractEngine {
 
             };
             root.addChildren(platform);
-
-            offset = offset.add(new Vector2(64, 16));
         }
         //endregion
 
@@ -156,7 +154,7 @@ public class Game extends AbstractEngine {
         //region TEST Respawn
 
         if (player.getCollider().isCollidingWith(respawnWall.getCollider())) {
-            player.setPosition(new Vector2(0, 0));
+            player.setPosition(new Vector2(0, 40));
         }
 
         //endregion
@@ -185,7 +183,7 @@ public class Game extends AbstractEngine {
         Engine engine = new Engine(new Game());
         engine.setTitle("Creia");
 
-        engine.setHeight(150);
+        engine.setHeight(200);
         engine.setWidth(300);
 
         engine.setScale(4f);

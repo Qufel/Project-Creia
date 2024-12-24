@@ -1,6 +1,7 @@
 package engine.objects;
 
 import engine.Engine;
+import engine.graphics.Primitives;
 import engine.graphics.Sprite;
 import engine.graphics.Tileset;
 import engine.physics.Vector2;
@@ -131,40 +132,44 @@ public class Tilemap extends StaticBody {
         if (this.height - countY * MAX_TILES> 0)
             countY++;
 
+        Vector2 corner = new Vector2(
+                -(getWidth() * tileset.getCellWidth()) / 2,
+                (getHeight() * tileset.getCellHeight()) / 2
+        );
+
+        Vector2 originPos = new Vector2(
+                MAX_TILES * getTileset().getCellWidth() / 2,
+                -MAX_TILES * getTileset().getCellHeight() / 2
+        ).add(corner);
+
+        Vector2 offset = Vector2.ZERO;
+
+        this.addChildren(
+                new Sprite2D(this, "aaa", corner, Primitives.Circle(5, 0xffff0000))
+        );
+
         for (int y = 0; y < countY; y++) {
             for (int x = 0; x < countX; x++) {
 
                 // Determine width and height of each cluster (sprite)
-                int width = MAX_TILES;
-                int height = MAX_TILES;
+                int width = Math.min(MAX_TILES, this.width - x * MAX_TILES);
+                int height = Math.min(MAX_TILES, this.height - y * MAX_TILES);
 
-                if (width * (x + 1) > this.width)
-                    width = this.width - MAX_TILES * x;
-
-                if (height * (y + 1) > this.height)
-                    height = this.height - MAX_TILES * y;
+                offset = new Vector2(
+                        x * (MAX_TILES * tileset.getCellWidth()) - (MAX_TILES - width == 0 ? 0 : width + 1) * tileset.getCellWidth(),
+                        -y * (MAX_TILES * tileset.getCellHeight()) + (MAX_TILES - height == 0 ? 0 : height + 3) * tileset.getCellHeight()
+                );
 
                 // Create cluster (sprite)
                 int[] pixels = createPixelArray(x, y, width, height);
                 Sprite sprite = new Sprite(pixels, tileset.getCellWidth() * width, tileset.getCellHeight() * height, false, false);
 
-                Vector2 position = Vector2.ZERO;
-
-                // Determine position of cluster
-                Vector2 clusterCenter = new Vector2(
-                        x * (MAX_TILES * tileset.getCellWidth()) + width * tileset.getCellWidth() / 2,
-                        y * (MAX_TILES * tileset.getCellHeight()) + height * tileset.getCellHeight() / 2
+                this.addChildren(
+                        new Sprite2D(this, "aaa", originPos.add(offset), Primitives.Circle(5, 0xff0000ff))
                 );
-
-                Vector2 corner = new Vector2(
-                        (-getWidth() * MAX_TILES) / 2,
-                        (getHeight() * MAX_TILES) / 2
-                );
-
-                position = clusterCenter.sub(corner);
 
                 this.addChildren(
-                        new Sprite2D(this, "Sprite_" + x + "_" + y, position, sprite)
+                        new Sprite2D(this, "Sprite_" + x + "_" + y, originPos.add(offset), sprite)
                 );
 
             }
@@ -176,15 +181,15 @@ public class Tilemap extends StaticBody {
         int cellW = tileset.getCellWidth(), cellH = tileset.getCellHeight();
         int[] pixels = new int[(cellW * width) * (cellH * height)];
 
-        for (int i = 0; i < height; i++) {
-            for (int j = 0; j < width; j++) {
+        for (int tileY = 0; tileY < height; tileY++) {
+            for (int tileX = 0; tileX < width; tileX++) {
 
                 // Get offset values for each tile
-                int offsetX = xCoord * MAX_TILES;
-                int offsetY = yCoord * MAX_TILES;
+                int globalTileX = xCoord * MAX_TILES + tileX;
+                int globalTileY = yCoord * MAX_TILES + tileY;
 
                 // Get tile id
-                int tile = getTileIdAt(j + offsetX, i + offsetY);
+                int tile = getTileIdAt(globalTileX, globalTileY);
 
                 int[] tilePixels = new int[cellW * cellH];
 
@@ -198,7 +203,7 @@ public class Tilemap extends StaticBody {
                 for (int y = 0; y < cellH; y++) {
                     for (int x = 0; x < cellW; x++) {
 
-                        int index = indexAt(x, y, i, j, width);
+                        int index = indexAt(x, y, tileY, tileX, width);
                         pixels[index] = tilePixels[y * cellW + x];
 
                     }
