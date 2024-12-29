@@ -101,7 +101,9 @@ public class Game extends AbstractEngine {
 
     private Tileset tileset = new Tileset("/res/sprites/tileset.png", 16, 16);
 
-    private Tilemap tilemap = new Tilemap(root, "TM_Walkable", Vector2.ZERO, tileset, "src/res/tmWalkable.csv", false);
+    private Tilemap walkable = new Tilemap(root, "TM_Walkable", Vector2.ZERO, tileset, "src/res/tmWalkable.csv", true);
+
+    private Tilemap foliage = new Tilemap(root, "TM_Foliage", new Vector2(8, 16), tileset, "src/res/test_Foliage.csv", false);
 
     public Game() {
 

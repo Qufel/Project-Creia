@@ -156,8 +156,8 @@ public class Tilemap extends StaticBody {
                 int height = Math.min(MAX_TILES, this.height - y * MAX_TILES);
 
                 offset = new Vector2(
-                        x * (MAX_TILES * tileset.getCellWidth()) - (MAX_TILES - width == 0 ? 0 : width + 1) * tileset.getCellWidth(),
-                        -y * (MAX_TILES * tileset.getCellHeight()) + (MAX_TILES - height == 0 ? 0 : height + 3) * tileset.getCellHeight()
+                        x * (MAX_TILES * tileset.getCellWidth()) - (MAX_TILES - width == 0 ? 0 : width + x - 1) * tileset.getCellWidth(),
+                        -y * (MAX_TILES * tileset.getCellHeight()) + (MAX_TILES - height == 0 ? 0 : height + y + 1) * tileset.getCellHeight()
                 );
 
                 // Create cluster (sprite)
