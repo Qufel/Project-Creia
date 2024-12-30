@@ -2,6 +2,7 @@ package engine.objects;
 
 import engine.Engine;
 import engine.graphics.Primitives;
+import engine.graphics.Color;
 import engine.graphics.Sprite;
 import engine.graphics.Tileset;
 import engine.physics.Vector2;
@@ -14,7 +15,7 @@ import java.util.Arrays;
 
 public class Tilemap extends StaticBody {
 
-    //TODO: Generating sprite/s [ ]
+    //TODO: Generating sprite/s [x]
     //TODO: Generating colliders [ ]
 
     private final int MAX_TILES = 8;
@@ -145,7 +146,7 @@ public class Tilemap extends StaticBody {
         Vector2 offset = Vector2.ZERO;
 
         this.addChildren(
-                new Sprite2D(this, "aaa", corner, Primitives.Circle(5, 0xffff0000))
+                new Sprite2D(this, "aaa", corner, Primitives.Circle(5, Color.RED))
         );
 
         for (int y = 0; y < countY; y++) {
@@ -156,8 +157,8 @@ public class Tilemap extends StaticBody {
                 int height = Math.min(MAX_TILES, this.height - y * MAX_TILES);
 
                 offset = new Vector2(
-                        x * (MAX_TILES * tileset.getCellWidth()) - (MAX_TILES - width == 0 ? 0 : width + x - 1) * tileset.getCellWidth(),
-                        -y * (MAX_TILES * tileset.getCellHeight()) + (MAX_TILES - height == 0 ? 0 : height + y + 1) * tileset.getCellHeight()
+                        x * (MAX_TILES * tileset.getCellWidth()) - (MAX_TILES - width == 0 ? 0 : (int) Math.floor((MAX_TILES * (x + 1) - this.width) / 2)) * tileset.getCellWidth(),
+                        -y * (MAX_TILES * tileset.getCellHeight()) + (MAX_TILES - height == 0 ? 0 : (int) Math.floor((MAX_TILES * (y + 1) - this.height) / 2)) * tileset.getCellHeight()
                 );
 
                 // Create cluster (sprite)
@@ -165,12 +166,16 @@ public class Tilemap extends StaticBody {
                 Sprite sprite = new Sprite(pixels, tileset.getCellWidth() * width, tileset.getCellHeight() * height, false, false);
 
                 this.addChildren(
-                        new Sprite2D(this, "aaa", originPos.add(offset), Primitives.Circle(5, 0xff0000ff))
+                    new Sprite2D(this, "rect", originPos.add(offset), Primitives.Rect(width * tileset.getCellWidth(), height * tileset.getCellHeight(), Color.randomize()))
                 );
 
                 this.addChildren(
-                        new Sprite2D(this, "Sprite_" + x + "_" + y, originPos.add(offset), sprite)
+                        new Sprite2D(this, "aaa", originPos.add(offset), Primitives.Circle(5, Color.BLUE))
                 );
+
+                // this.addChildren(
+                //         new Sprite2D(this, "Sprite_" + x + "_" + y, originPos.add(offset), sprite)
+                // );
 
             }
         }

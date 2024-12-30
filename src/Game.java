@@ -103,7 +103,7 @@ public class Game extends AbstractEngine {
 
     private Tilemap walkable = new Tilemap(root, "TM_Walkable", Vector2.ZERO, tileset, "src/res/tmWalkable.csv", true);
 
-    private Tilemap foliage = new Tilemap(root, "TM_Foliage", new Vector2(8, 16), tileset, "src/res/test_Foliage.csv", false);
+    // private Tilemap foliage = new Tilemap(root, "TM_Foliage", new Vector2(8, 16), tileset, "src/res/test_Foliage.csv", false);
 
     public Game() {
 
