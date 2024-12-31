@@ -103,7 +103,7 @@ public class Game extends AbstractEngine {
 
     private Tilemap walkable = new Tilemap(root, "TM_Walkable", Vector2.ZERO, tileset, "src/res/tmWalkable.csv", true);
 
-    // private Tilemap foliage = new Tilemap(root, "TM_Foliage", new Vector2(8, 16), tileset, "src/res/test_Foliage.csv", false);
+     private Tilemap foliage = new Tilemap(root, "TM_Foliage", new Vector2(8, 16), tileset, "src/res/test_Foliage.csv", false);
 
     public Game() {
 
@@ -116,7 +116,7 @@ public class Game extends AbstractEngine {
 
         //region TEST Factory of Platforms TODO: Implement class ObjectFactory
         int count = 1; // Platforms count
-        Vector2 startPos = Vector2.ZERO;
+        Vector2 startPos = new Vector2(0, 0);
         Vector2 offset = Vector2.ZERO;
 
         for (int i = 0; i < count; i++) {
@@ -125,7 +125,7 @@ public class Game extends AbstractEngine {
                 @Override
                 public void start(Engine engine) {
                     addChildren(
-                            new Collider(this, "Collider", Vector2.ZERO, new AABB(new Vector2(48, 16))),
+                            new Collider(this, "Collider", Vector2.ZERO, new AABB(new Vector2(42, 16))),
                             new Sprite2D(this, "Sprite", Vector2.ZERO, new Sprite("/res/sprites/platform.png"))
                     );
                     setMass(0.0f);
