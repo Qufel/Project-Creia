@@ -6,6 +6,7 @@ import engine.graphics.Color;
 import engine.graphics.Sprite;
 import engine.graphics.Tileset;
 import engine.physics.Vector2;
+import engine.physics.shapes.AABB;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -14,9 +15,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class Tilemap extends StaticBody {
-
-    //TODO: Generating sprite/s [x]
-    //TODO: Generating colliders [ ]
 
     private final int MAX_TILES = 8;
 
@@ -120,7 +118,13 @@ public class Tilemap extends StaticBody {
     @Override
     public void start(Engine engine) {
         createSprites();
+
+        if (generateColliders)
+            createCollisions();
+
     }
+
+    //region Tilemap Visuals
 
     private void createSprites() {
         // Get count of how many sprites to generate
@@ -152,17 +156,20 @@ public class Tilemap extends StaticBody {
                 int width = Math.min(MAX_TILES, this.width - x * MAX_TILES);
                 int height = Math.min(MAX_TILES, this.height - y * MAX_TILES);
 
+                // Calculate an offset from origin position
                 offset = new Vector2(
                         x * (MAX_TILES * tileset.getCellWidth()) - (MAX_TILES - width == 0 ? 0 : (int) ((MAX_TILES * (x + 1) - this.width) / 2)) * tileset.getCellWidth(),
                         -y * (MAX_TILES * tileset.getCellHeight()) + (MAX_TILES - height == 0 ? 0 : (int) ((MAX_TILES * (y + 1) - this.height) / 2)) * tileset.getCellHeight()
                 );
 
+
+                // Add an offset whenever a width/height of a cluster is odd, this resolves a spacing gap between this and neighbouring cluster
                 Vector2 oddOffset = new Vector2(
                         width % 2 == 0 ? 0 : - tileset.getCellWidth() / 2,
                         height % 2 == 0 ? 0 : tileset.getCellHeight() / 2
                 );
 
-                offset = offset.add(oddOffset);
+                Vector2 position = originPos.add(offset.add(oddOffset));
 
                 // Create cluster (sprite)
                 int[] pixels = createPixelArray(x, y, width, height);
@@ -177,7 +184,7 @@ public class Tilemap extends StaticBody {
 //                );
 
                  this.addChildren(
-                         new Sprite2D(this, "Sprite_" + x + "_" + y, originPos.add(offset), sprite)
+                         new Sprite2D(this, "Sprite_" + x + "_" + y, position, sprite)
                  );
 
             }
@@ -230,4 +237,71 @@ public class Tilemap extends StaticBody {
 
 //        return y * ((cellW * w - ((w - 1) * cellW))) + i * cellW + (y * cellW + x) + j * cellH * (w * cellW);
     }
+
+    //endregion
+
+    //region Tilemap Physcis
+
+    private void createCollisions() {
+
+        ArrayList<Collider> colliders = new ArrayList<>();
+        boolean[][] visited = new boolean[width][height];
+
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                if (collisionMap[x][y] == 1 && !visited[x][y]) {
+                    // Detect rectangle starting from (x, y)
+                    int startX = x, startY = y;
+                    int endX = x, endY = y;
+
+                    // Expand right
+                    while (endX + 1 < width && collisionMap[endX + 1][startY] == 1 && !visited[endX + 1][startY]) {
+                        endX++;
+                    }
+
+                    // Expand down, ensuring all tiles in the current width range are valid
+                    boolean canExpandDown = true;
+                    while (canExpandDown && endY + 1 < height) {
+                        for (int col = startX; col <= endX; col++) {
+                            if (collisionMap[col][endY + 1] == 0 || visited[col][endY + 1]) {
+                                canExpandDown = false;
+                                break;
+                            }
+                        }
+                        if (canExpandDown) endY++;
+                    }
+
+                    // Mark all tiles within the rectangle as visited
+                    for (int row = startY; row <= endY; row++) {
+                        for (int col = startX; col <= endX; col++) {
+                            visited[col][row] = true;
+                        }
+                    }
+
+                    // Calculate collider size and position
+                    int tileWidth = tileset.getCellWidth();
+                    int tileHeight = tileset.getCellHeight();
+
+                    int colliderWidth = (endX - startX + 1) * tileWidth;
+                    int colliderHeight = (endY - startY + 1) * tileHeight;
+
+                    int centerX = (startX + endX + 1) * tileWidth / 2 - (width * tileWidth / 2);
+                    int centerY = -((startY + endY + 1) * tileHeight / 2 - (height * tileHeight / 2));
+
+                    Vector2 colliderPosition = new Vector2(centerX, centerY);
+                    Vector2 colliderSize = new Vector2(colliderWidth, colliderHeight);
+
+                    AABB aabb = new AABB(colliderSize);
+                    Collider collider = new Collider(this, "Collider_" + startX + "_" + startY, colliderPosition, aabb);
+
+                    colliders.add(collider);
+                    this.addChildren(collider);
+                }
+            }
+        }
+
+    }
+
+    //endregion
+
 }
