@@ -1,4 +1,4 @@
-# Project: Creia
+# Creia
 Creia is the game created entirely in Java and is using its own engine.
 It was created as a college project and is still in development.
 ## External sources used
