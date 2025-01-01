@@ -95,15 +95,22 @@ public class Game extends AbstractEngine {
             super.start(engine);
         }
 
+        @Override
+        public void update(Engine engine, float delta) {
+            if (player.getCollider().isCollidingWith(respawnWall.getCollider())) {
+                player.setPosition(new Vector2(0, 40));
+            }
+        }
+
     };
 
     private AudioClip coinPickup = new AudioClip("/res/audio/coin-pick.wav");
 
     private Tileset tileset = new Tileset("/res/sprites/tileset.png", 16, 16);
 
-    private Tilemap walkable = new Tilemap(root, "TM_Walkable", Vector2.ZERO, tileset, "src/res/tmWalkable.csv", true);
+    private Tilemap walkable = new Tilemap(root, "TM_Walkable", Vector2.ZERO, tileset, "/res/tmWalkable.csv", true);
 
-     private Tilemap foliage = new Tilemap(root, "TM_Foliage", new Vector2(8, 16), tileset, "src/res/test_Foliage.csv", false);
+     private Tilemap foliage = new Tilemap(root, "TM_Foliage", new Vector2(8, 16), tileset, "/res/test_Foliage.csv", false);
 
     public Game() {
 
@@ -128,14 +135,6 @@ public class Game extends AbstractEngine {
 
         if (engine.getInput().isKeyDown(KeyEvent.VK_NUMPAD5))
             System.out.println("Manual stop");
-
-        //region TEST Respawn
-
-        if (player.getCollider().isCollidingWith(respawnWall.getCollider())) {
-            player.setPosition(new Vector2(0, 40));
-        }
-
-        //endregion
 
         // Run update for all objects in scene
         for(GameObject object : root.getChildren()) {

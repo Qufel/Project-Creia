@@ -11,6 +11,7 @@ import engine.physics.shapes.AABB;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -67,7 +68,7 @@ public class Tilemap extends StaticBody {
         this.tileset = tileset;
         this.generateColliders = generateColliders;
 
-        try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(this.getClass().getResourceAsStream(filename)))) {
 
             ArrayList<Integer> ids = new ArrayList<>();
 
