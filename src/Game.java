@@ -5,6 +5,7 @@ import engine.objects.*;
 import engine.physics.Vector2;
 import engine.physics.shapes.AABB;
 
+import java.awt.*;
 import java.awt.event.KeyEvent;
 
 public class Game extends AbstractEngine {
@@ -110,7 +111,7 @@ public class Game extends AbstractEngine {
 
     private Tilemap walkable = new Tilemap(root, "TM_Walkable", Vector2.ZERO, tileset, "/res/tmWalkable.csv", true);
 
-     private Tilemap foliage = new Tilemap(root, "TM_Foliage", new Vector2(8, 16), tileset, "/res/test_Foliage.csv", false);
+    private Tilemap foliage = new Tilemap(root, "TM_Foliage", new Vector2(8, 16), tileset, "/res/test_Foliage.csv", false);
 
     public Game() {
 
@@ -164,7 +165,9 @@ public class Game extends AbstractEngine {
         engine.setWidth(300);
 
         engine.setScale(4f);
-        
+
+        engine.setFullscreen(false);
+
         engine.start();
 
     }

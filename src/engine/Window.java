@@ -38,6 +38,9 @@ public class Window {
 
         frame = new JFrame(engine.getTitle());
 
+        if (engine.isFullscreen())
+            frame.setUndecorated(true);
+
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLayout(new BorderLayout());
 

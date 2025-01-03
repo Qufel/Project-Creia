@@ -4,6 +4,8 @@ import engine.physics.CollisionSystem;
 import engine.physics.PhysicsSystem;
 import engine.physics.Vector2;
 
+import java.awt.*;
+
 public class Engine implements Runnable {
 
     private Thread thread;
@@ -29,6 +31,8 @@ public class Engine implements Runnable {
     private float scale = 1f;
     private String title = "2D Game Project";
 
+    private boolean fullscreen = false;
+
     //endregion
 
     public Engine(AbstractEngine aEngine) {
@@ -36,6 +40,14 @@ public class Engine implements Runnable {
     }
 
     public void start() {
+
+        // Set size if fullscreen
+        if (fullscreen) {
+            Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+
+            setWidth((int)(screenSize.width / getScale()));
+            setHeight((int)(screenSize.height / getScale()));
+        }
 
         // Engine classes
         window = new Window(this);
@@ -48,7 +60,6 @@ public class Engine implements Runnable {
 
         thread = new Thread(this);
         thread.run();
-
 
     }
 
@@ -193,6 +204,14 @@ public class Engine implements Runnable {
 
     public void setHeight(int height) {
         this.height = height;
+    }
+
+    public boolean isFullscreen() {
+        return fullscreen;
+    }
+
+    public void setFullscreen(boolean fullscreen) {
+        this.fullscreen = fullscreen;
     }
 
     //endregion
