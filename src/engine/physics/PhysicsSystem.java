@@ -1,6 +1,8 @@
 package engine.physics;
 
 import engine.objects.PhysicsBody;
+import engine.physics.forces.ForceGenerator;
+import engine.physics.forces.ForceRegistration;
 import engine.physics.forces.ForceRegistry;
 import engine.physics.forces.Gravity;
 
@@ -48,6 +50,7 @@ public class PhysicsSystem {
 
     public void clearBodies() {
         this.bodies.clear();
+        this.forceRegistry.clear();
     }
 
 }

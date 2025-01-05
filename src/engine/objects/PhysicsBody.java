@@ -7,16 +7,18 @@ import java.util.ArrayList;
 
 public class PhysicsBody extends GameObject {
 
-    private double mass; // The body's mass
-    private double inverseMass = 0.0;
+    private float mass; // The body's mass
+    private float inverseMass = 0.0f;
 
-    private double gravityScale = 1.0; // A scale in which gravity acts with this body i.e. how much is affected by it
+    private float gravityScale = 1.0f; // A scale in which gravity acts with this body i.e. how much is affected by it
 
     private Vector2 velocity = new Vector2(0, 0);
     private Vector2 acceleration = new Vector2(0, 0);
 
-    private ArrayList<Vector2> forces = new ArrayList<>();
     private Vector2 finalForce = new Vector2(0, 0);
+
+    private float friction = 0.5f;
+    private float restitution = 0.5f;
 
     private boolean collide = true; // If false ignore all collisions
     private boolean freeze = false; // Is body frozen in physics simulation i.e. is affected by physics
@@ -39,10 +41,6 @@ public class PhysicsBody extends GameObject {
         this.acceleration = acceleration;
     }
 
-    public ArrayList<Vector2> getForces() {
-        return forces;
-    }
-
     public Vector2 getFinalForce() {
         return finalForce;
     }
@@ -51,23 +49,39 @@ public class PhysicsBody extends GameObject {
         return mass;
     }
 
-    public double getInverseMass() {
+    public float getInverseMass() {
         return inverseMass;
     }
 
-    public void setMass(double mass) {
+    public void setMass(float mass) {
         this.mass = mass;
 
-        if (mass != 0.0)
-            inverseMass = 1.0 / mass;
+        if (mass != 0.0f)
+            inverseMass = 1.0f / mass;
     }
 
     public double getGravityScale() {
         return gravityScale;
     }
 
-    public void setGravityScale(double gravityScale) {
+    public void setGravityScale(float gravityScale) {
         this.gravityScale = gravityScale;
+    }
+
+    public float getRestitution() {
+        return restitution;
+    }
+
+    public void setRestitution(float restitution) {
+        this.restitution = restitution;
+    }
+
+    public float getFriction() {
+        return friction;
+    }
+
+    public void setFriction(float friction) {
+        this.friction = friction;
     }
 
     public boolean isColliding() {

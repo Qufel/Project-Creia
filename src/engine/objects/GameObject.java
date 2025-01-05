@@ -91,6 +91,8 @@ public class GameObject {
         for (Camera camera : cameras) {
             camera.update(engine, delta);
         }
+
+        cameras.clear();
     }
 
     @Override
@@ -125,6 +127,10 @@ public class GameObject {
 
     //region Children/Parent management
 
+    /**
+     * Returns a root ( scene / top most object ) of an object
+     * @return root
+     */
     public Scene getRoot() {
         while (!((parent = getParent()) instanceof Scene)) {
             parent = parent.getParent();
@@ -134,7 +140,7 @@ public class GameObject {
 
     /**
      * Returns a parent of this object
-     * @return
+     * @return parent
      */
     public GameObject getParent() {
         return parent;
