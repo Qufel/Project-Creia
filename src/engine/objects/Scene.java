@@ -21,9 +21,23 @@ public class Scene extends GameObject {
         this.origin = position;
     }
 
-    /// TODO: Scene functionality
-    /// - Object hierarchy
-    /// - Object rendering - Done
+    @Override
+    public void start(Engine engine) {
+
+        for (GameObject child : getChildren()) {
+            child.start(engine);
+        }
+
+    }
+
+    @Override
+    public void update(Engine engine, float delta) {
+
+        for (GameObject child : getChildren()) {
+            child.update(engine, delta);
+        }
+
+    }
 
     //region Physics & Collision management
 
