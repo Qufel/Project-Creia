@@ -75,9 +75,21 @@ public class GameObject {
     }
 
     public void update(Engine engine, float delta) {
+
+        ArrayList<Camera> cameras = new ArrayList<Camera>();
+
         // It runs every frame
         for (GameObject child : children) {
+            if (child instanceof Camera) {
+                cameras.add((Camera) child);
+                continue;
+            }
             child.update(engine, delta);
+        }
+
+        // Run update for cameras
+        for (Camera camera : cameras) {
+            camera.update(engine, delta);
         }
     }
 
@@ -112,6 +124,13 @@ public class GameObject {
     }
 
     //region Children/Parent management
+
+    public Scene getRoot() {
+        while (!((parent = getParent()) instanceof Scene)) {
+            parent = parent.getParent();
+        }
+        return (Scene) parent;
+    }
 
     /**
      * Returns a parent of this object
