@@ -52,8 +52,17 @@ public class CollisionSystem {
             CollisionData data = new CollisionData();
 
             if (IntersectionDetector.aabbInAABB(a.getAABB(), b.getAABB(), data)) {
-//                resolveCollision((PhysicsBody) a.getParent(), (PhysicsBody) b.getParent(), data);
-                oldResolveCollision(a, b, data); // TODO: Temporary
+
+                if (!a.getCollidingObjects().contains(b)) {
+                    a.getCollidingObjects().add(b);
+                }
+
+                if (!b.getCollidingObjects().contains(a)) {
+                    b.getCollidingObjects().add(a);
+                }
+
+                resolveCollision((PhysicsBody) a.getParent(), (PhysicsBody) b.getParent(), data);
+//                oldResolveCollision(a, b, data); // TODO: Temporary
             }
 
         }
@@ -138,6 +147,10 @@ public class CollisionSystem {
         Vector2 relativeVelocity = a.getVelocity().sub(b.getVelocity());
         float relativeVelocityAlongNormal = relativeVelocity.dot(data.normal);
 
+        if (relativeVelocityAlongNormal > 0) {
+            return; // Objects are separating, no impulse required
+        }
+
         // Get elasticity of the collision
         float elasticity = Math.min(a.getRestitution(), b.getRestitution());
 
@@ -145,21 +158,24 @@ public class CollisionSystem {
         float impulseMagnitude = -(1 + elasticity) * relativeVelocityAlongNormal;
         impulseMagnitude /= a.getInverseMass() + b.getInverseMass();
 
+        // Apply impulse directly to object's velocity
         Vector2 impulseVector = data.normal.mul(impulseMagnitude);
+        if (a.getMass() > 0) {
+            a.setVelocity(a.getVelocity().add(impulseVector.mul(a.getInverseMass())));
+        }
+        if (b.getMass() > 0) {
+            b.setVelocity(b.getVelocity().sub(impulseVector.mul(b.getInverseMass())));
+        }
 
-        engine.getPhysics().getForceRegistry().add(a, new ForceGenerator() {
-            @Override
-            public void updateForce(PhysicsBody body, float delta) {
-                body.addForce(impulseVector.mul(delta * 10));
-            }
-        });
+        // Apply position correction to objects
+        Vector2 correction = data.normal.mul(data.penetration.dot(data.normal) / (a.getInverseMass() + b.getInverseMass()));
+        if (a.getMass() > 0) {
+            a.setPosition(a.getPosition().add(correction.mul(a.getInverseMass())));
+        }
+        if (b.getMass() > 0) {
+            b.setPosition(b.getPosition().sub(correction.mul(b.getInverseMass())));
+        }
 
-        engine.getPhysics().getForceRegistry().add(b, new ForceGenerator() {
-            @Override
-            public void updateForce(PhysicsBody body, float delta) {
-                body.addForce(impulseVector.mul(delta * 10).mul(-1));
-            }
-        });
     }
 
     private ArrayList<Pair> getPossiblePairs() {

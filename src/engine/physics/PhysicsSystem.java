@@ -9,6 +9,7 @@ import engine.physics.forces.Gravity;
 import java.util.ArrayList;
 
 public class PhysicsSystem {
+
     private ForceRegistry forceRegistry;
     private ArrayList<PhysicsBody> bodies;
 

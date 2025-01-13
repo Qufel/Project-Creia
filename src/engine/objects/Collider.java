@@ -1,5 +1,6 @@
 package engine.objects;
 
+import engine.Engine;
 import engine.physics.Vector2;
 import engine.physics.shapes.AABB;
 
@@ -18,6 +19,12 @@ public class Collider extends GameObject {
         this.aabb = aabb;
 
         this.aabb.setCollider(this);
+    }
+
+    @Override
+    public void update(Engine engine, float delta) {
+        if (!collidingObjects.isEmpty()) isColliding = true;
+        else isColliding = false;
     }
 
     @Override

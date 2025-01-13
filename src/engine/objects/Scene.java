@@ -2,7 +2,10 @@ package engine.objects;
 
 import engine.Engine;
 import engine.Renderer;
+import engine.graphics.Color;
+import engine.graphics.Primitives;
 import engine.physics.Vector2;
+import engine.physics.shapes.AABB;
 
 public class Scene extends GameObject {
 
@@ -131,6 +134,13 @@ public class Scene extends GameObject {
         if (object instanceof Sprite2D) {
             Sprite2D sprite = (Sprite2D) object;
             sprite.draw(renderer, delta);
+        }
+
+        if (object instanceof Collider && debugColliders) {
+            AABB aabb = ((Collider) object).getAABB();
+            int width = Math.abs(aabb.getMax().x - aabb.getMin().x);
+            int height = Math.abs(aabb.getMax().y - aabb.getMin().y);
+            renderer.drawRect((object.getGlobalPosition().x - renderer.getCamera().x) - width / 2, (object.getGlobalPosition().y - renderer.getCamera().y) - height / 2, width, height, Color.GREEN);
         }
 
     }

@@ -23,7 +23,7 @@ public class Game extends AbstractEngine {
 
                         addChildren(
                                 new Sprite2D(player, "Sprite", new Vector2(0, 0), new AnimatedSprite("/res/sprites/animation.png", 16, 16)),
-                                new Collider(player, "Collider", new Vector2(0, 0), new AABB(new Vector2(10, 16)))
+                                new Collider(player, "Collider", new Vector2(0, 0), new AABB(new Vector2(10, 17)))
                         );
 
 
@@ -94,7 +94,7 @@ public class Game extends AbstractEngine {
                     @Override
                     public void start(Engine engine) {
                         addChildren(
-                                new Collider(respawnWall, "Collider", new Vector2(0, 0), new AABB(new Vector2(Integer.MAX_VALUE / 2, 2)))
+                                new Collider(respawnWall, "Collider", new Vector2(0, 0), new AABB(new Vector2(2000, 2)))
                         );
                         setColliding(false);
                         super.start(engine);
