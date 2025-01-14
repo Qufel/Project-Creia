@@ -23,6 +23,8 @@ public class PhysicsBody extends GameObject {
     private boolean collide = true; // If false ignore all collisions
     private boolean freeze = false; // Is body frozen in physics simulation i.e. is affected by physics
 
+    private boolean onGround = false;
+
     //region Getters & Setters
 
     public Vector2 getVelocity() {
@@ -98,6 +100,14 @@ public class PhysicsBody extends GameObject {
 
     public void setFreeze(boolean freeze) {
         this.freeze = freeze;
+    }
+
+    public boolean isOnGround() {
+        return onGround;
+    }
+
+    public void setOnGround(boolean onGround) {
+        this.onGround = onGround;
     }
 
     //endregion

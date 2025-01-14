@@ -23,7 +23,7 @@ public class Game extends AbstractEngine {
 
                         addChildren(
                                 new Sprite2D(player, "Sprite", new Vector2(0, 0), new AnimatedSprite("/res/sprites/animation.png", 16, 16)),
-                                new Collider(player, "Collider", new Vector2(0, 0), new AABB(new Vector2(10, 17)))
+                                new Collider(player, "Collider", new Vector2(0, 0), new AABB(new Vector2(10, 16)))
                         );
 
 

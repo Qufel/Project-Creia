@@ -49,6 +49,9 @@ public class CollisionSystem {
             a.getCollidingObjects().remove(b);
             b.getCollidingObjects().remove(a);
 
+            ((PhysicsBody) a.getParent()).setOnGround(false);
+            ((PhysicsBody) b.getParent()).setOnGround(false);
+
             CollisionData data = new CollisionData();
 
             if (IntersectionDetector.aabbInAABB(a.getAABB(), b.getAABB(), data)) {
@@ -59,6 +62,12 @@ public class CollisionSystem {
 
                 if (!b.getCollidingObjects().contains(a)) {
                     b.getCollidingObjects().add(a);
+                }
+
+                // Set onGround if collision normal is Vector2.UP
+                if (data.normal.equals(Vector2.UP)) {
+                    if (((PhysicsBody)a.getParent()).getMass() > 0) ((PhysicsBody)a.getParent()).setOnGround(true);
+                    if (((PhysicsBody)b.getParent()).getMass() > 0) ((PhysicsBody)b.getParent()).setOnGround(true);
                 }
 
                 resolveCollision((PhysicsBody) a.getParent(), (PhysicsBody) b.getParent(), data);
@@ -168,7 +177,7 @@ public class CollisionSystem {
         }
 
         // Apply position correction to objects
-        Vector2 correction = data.normal.mul(data.penetration.dot(data.normal) / (a.getInverseMass() + b.getInverseMass()));
+        Vector2 correction = data.normal.mul( data.penetration.dot(data.normal) / (a.getInverseMass() + b.getInverseMass()));
         if (a.getMass() > 0) {
             a.setPosition(a.getPosition().add(correction.mul(a.getInverseMass())));
         }
