@@ -41,16 +41,11 @@ public class CollisionSystem {
 
         for (Pair pair : possiblePairs) {
 
-            if (pair.a.getAABB().getMin().x > pair.a.getAABB().getMax().x) continue;
-
             Collider a = pair.a;
             Collider b = pair.b;
 
             a.getCollidingObjects().remove(b);
             b.getCollidingObjects().remove(a);
-
-            ((PhysicsBody) a.getParent()).setOnGround(false);
-            ((PhysicsBody) b.getParent()).setOnGround(false);
 
             CollisionData data = new CollisionData();
 
@@ -71,82 +66,7 @@ public class CollisionSystem {
                 }
 
                 resolveCollision((PhysicsBody) a.getParent(), (PhysicsBody) b.getParent(), data);
-//                oldResolveCollision(a, b, data); // TODO: Temporary
             }
-
-        }
-
-        System.gc();
-    }
-
-    private void oldResolveCollision(Collider a, Collider b, CollisionData data) {
-
-        PhysicsBody aBody = (PhysicsBody) a.getParent();
-        PhysicsBody bBody = (PhysicsBody) b.getParent();
-
-        int penetration = (int) Math.abs(data.normal.dot(data.penetration));
-
-        if (!a.getCollidingObjects().contains(b)) {
-            a.getCollidingObjects().add(b);
-        }
-
-        if (!b.getCollidingObjects().contains(a)) {
-            b.getCollidingObjects().add(a);
-        }
-
-        if (aBody.getMass() != 0 && bBody.isColliding()) {
-
-            aBody.setPosition(aBody.getPosition().add(data.normal.mul(penetration + 1)));
-
-            Vector2 aVelocity = aBody.getVelocity();
-
-            int aVDot = (int) aVelocity.dot(data.normal);
-
-            if (aVDot < 0 && (data.normal.equals(Vector2.UP) || data.normal.equals(Vector2.DOWN))) {
-                aVelocity.y = 0;
-            }
-
-            if (aVDot < 0 && (data.normal.equals(Vector2.LEFT) || data.normal.equals(Vector2.RIGHT))) {
-                aVelocity.x = 0;
-            }
-
-            int acc = EMath.ceilFloor(data.normal.dot(aBody.getAcceleration()));
-
-            if (data.normal == Vector2.UP || data.normal == Vector2.RIGHT)
-                acc = Math.clamp(acc, 0, Integer.MAX_VALUE);
-            else if (data.normal == Vector2.DOWN || data.normal == Vector2.LEFT)
-                acc = Math.clamp(acc, Integer.MIN_VALUE, 0);
-
-            aBody.setAcceleration(aBody.getAcceleration().mul(acc));
-            aBody.setVelocity(aVelocity);
-
-        }
-
-        if (bBody.getMass() != 0 && aBody.isColliding()) {
-
-            bBody.setPosition(bBody.getPosition().add(data.normal.mul(penetration + 1).mul(-1)));
-
-            Vector2 bVelocity = bBody.getVelocity();
-
-            int bVDot = (int) bVelocity.dot(data.normal.mul(-1));
-
-            if (bVDot < 0 && (data.normal.equals(Vector2.UP) || data.normal.equals(Vector2.DOWN))) {
-                bVelocity.y = 0;
-            }
-
-            if (bVDot < 0 && (data.normal.equals(Vector2.LEFT) || data.normal.equals(Vector2.RIGHT))) {
-                bVelocity.x = 0;
-            }
-
-            int acc = EMath.ceilFloor(data.normal.dot(bBody.getAcceleration()));
-
-            if (data.normal == Vector2.UP || data.normal == Vector2.RIGHT)
-                acc = Math.clamp(acc, 0, Integer.MAX_VALUE);
-            else if (data.normal == Vector2.DOWN || data.normal == Vector2.LEFT)
-                acc = Math.clamp(acc, Integer.MIN_VALUE, 0);
-
-            bBody.setAcceleration(bBody.getAcceleration().mul(acc));
-            bBody.setVelocity(bVelocity);
 
         }
     }
@@ -177,12 +97,11 @@ public class CollisionSystem {
         }
 
         // Apply position correction to objects
-        Vector2 correction = data.normal.mul( data.penetration.dot(data.normal) / (a.getInverseMass() + b.getInverseMass()));
-        if (a.getMass() > 0) {
-            a.setPosition(a.getPosition().add(correction.mul(a.getInverseMass())));
-        }
-        if (b.getMass() > 0) {
-            b.setPosition(b.getPosition().sub(correction.mul(b.getInverseMass())));
+        float totalInverseMass = a.getInverseMass() + b.getInverseMass();
+        if (totalInverseMass > 0) {
+            Vector2 correction = data.normal.mul(data.penetration.dot(data.normal) / totalInverseMass);
+            if (a.getMass() > 0) a.setPosition(a.getPosition().add(correction.mul(a.getInverseMass())));
+            if (b.getMass() > 0) b.setPosition(b.getPosition().sub(correction.mul(b.getInverseMass())));
         }
 
     }
@@ -208,6 +127,8 @@ public class CollisionSystem {
                 if (aBody.equals(bBody)) continue;
                 if (aBody.getVelocity().equals(Vector2.ZERO) && bBody.getVelocity().equals(Vector2.ZERO)) continue;
 
+                if (a.getAABB().getMin().x > b.getAABB().getMax().x) continue;
+
                 if (possiblePairs.contains(pair)) continue;
 
                 possiblePairs.add(pair);
@@ -217,12 +138,6 @@ public class CollisionSystem {
 
         return possiblePairs;
     }
-
-    public void sortByMinX() {
-        colliders.sort(Comparator.comparingInt(collider -> collider.getGlobalPosition().x));
-    }
-
-
 
 }
 

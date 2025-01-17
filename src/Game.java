@@ -169,7 +169,7 @@ public class Game extends AbstractEngine {
     public void render(Engine engine, Renderer renderer, float delta) {
 
         for (Scene scene : scenes) {
-            scene.renderScene(engine, renderer, delta, false);
+            scene.renderScene(engine, renderer, delta, true);
         }
 
         renderer.drawText("FPS: " + engine.getFramesPerSecond() , 4 + renderer.getCamera().x, 4+ renderer.getCamera().y, 0xffffffff);

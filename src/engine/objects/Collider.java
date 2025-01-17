@@ -23,8 +23,7 @@ public class Collider extends GameObject {
 
     @Override
     public void update(Engine engine, float delta) {
-        if (!collidingObjects.isEmpty()) isColliding = true;
-        else isColliding = false;
+
     }
 
     @Override
@@ -39,7 +38,7 @@ public class Collider extends GameObject {
     }
 
     public boolean isColliding() {
-        return isColliding;
+        return !collidingObjects.isEmpty();
     }
 
     public boolean isCollidingWith(GameObject object) {

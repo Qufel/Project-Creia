@@ -140,7 +140,10 @@ public class Scene extends GameObject {
             AABB aabb = ((Collider) object).getAABB();
             int width = Math.abs(aabb.getMax().x - aabb.getMin().x);
             int height = Math.abs(aabb.getMax().y - aabb.getMin().y);
-            renderer.drawRect((object.getGlobalPosition().x - renderer.getCamera().x) - width / 2, (object.getGlobalPosition().y - renderer.getCamera().y) - height / 2, width, height, Color.GREEN);
+
+            int color = ((Collider) object).isColliding() ? Color.RED : Color.GREEN;
+
+            renderer.drawRect((object.getGlobalPosition().x - renderer.getCamera().x) - width / 2, (object.getGlobalPosition().y - renderer.getCamera().y) - height / 2, width, height, color);
         }
 
     }

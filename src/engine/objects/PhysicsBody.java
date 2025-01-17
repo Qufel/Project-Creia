@@ -127,6 +127,18 @@ public class PhysicsBody extends GameObject {
         clearForce();
     }
 
+    public void onCollisionEnter(GameObject object) {
+
+    }
+
+    public void onCollisionExit(GameObject object) {
+
+    }
+
+    public void onCollision(GameObject object) {
+
+    }
+
     //region Forces
 
     public void addForce(Vector2 force) {
