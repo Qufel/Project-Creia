@@ -86,21 +86,8 @@ public class Vector2 {
         return this.x * v.x + this.y * v.y;
     }
 
-    public Vector2 normalize() {
-        Vector2 v = new Vector2(this);
-        if (v.x > 1) {
-            v.x = 1;
-        } else if (v.x < -1) {
-            v.x = -1;
-        }
-
-        if (v.y > 1) {
-            v.y = 1;
-        } else if (v.y < -1) {
-            v.y = -1;
-        }
-
-        return v;
+    public Vector2 inverse() {
+        return new Vector2(-this.x, -this.y);
     }
 
     @Override

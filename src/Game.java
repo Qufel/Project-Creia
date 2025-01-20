@@ -54,6 +54,17 @@ public class Game extends AbstractEngine {
 
                         super.update(engine, delta);
                     }
+
+                    @Override
+                    public void onCollisionEnter(GameObject object) {
+                        System.out.println("Begun colliding with: " + object.toString());
+                    }
+
+                    @Override
+                    public void onCollisionExit(GameObject object) {
+                        System.out.println("No more colliding with: " + object.toString());
+                    }
+
                 };
 
                 private Camera camera = new Camera(this, player, "Camera");

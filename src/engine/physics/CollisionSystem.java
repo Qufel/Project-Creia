@@ -1,15 +1,12 @@
 package engine.physics;
 
-import engine.EMath;
 import engine.Engine;
 import engine.objects.Collider;
 import engine.objects.PhysicsBody;
 import engine.physics.collisions.CollisionData;
 import engine.physics.collisions.IntersectionDetector;
-import engine.physics.forces.ForceGenerator;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 
 public class CollisionSystem {
 
@@ -17,6 +14,9 @@ public class CollisionSystem {
 
     private ArrayList<Collider> colliders;
     private ArrayList<Pair> possiblePairs = new ArrayList<Pair>();
+
+    private ArrayList<Pair> collidingPairs = new ArrayList<Pair>();
+    private ArrayList<Pair> lastCollidingPairs = new ArrayList<Pair>();
 
     //region Getters & Setters
 
@@ -39,17 +39,20 @@ public class CollisionSystem {
 
         getPossiblePairs();
 
+        collidingPairs.clear();
+
         for (Pair pair : possiblePairs) {
 
             Collider a = pair.a;
             Collider b = pair.b;
 
-            a.getCollidingObjects().remove(b);
-            b.getCollidingObjects().remove(a);
-
             CollisionData data = new CollisionData();
 
             if (IntersectionDetector.aabbInAABB(a.getAABB(), b.getAABB(), data)) {
+
+                collidingPairs.add(pair);
+
+                // Objects start colliding
 
                 if (!a.getCollidingObjects().contains(b)) {
                     a.getCollidingObjects().add(b);
@@ -59,6 +62,10 @@ public class CollisionSystem {
                     b.getCollidingObjects().add(a);
                 }
 
+                // Add collision point to collider
+                a.addCollisionPoint(data.normal.inverse());
+                b.addCollisionPoint(data.normal);
+
                 // Set onGround if collision normal is Vector2.UP
                 if (data.normal.equals(Vector2.UP)) {
                     if (((PhysicsBody)a.getParent()).getMass() > 0) ((PhysicsBody)a.getParent()).setOnGround(true);
@@ -66,9 +73,43 @@ public class CollisionSystem {
                 }
 
                 resolveCollision((PhysicsBody) a.getParent(), (PhysicsBody) b.getParent(), data);
+
+            } else {
+
+                a.getCollidingObjects().remove(b);
+                b.getCollidingObjects().remove(a);
             }
 
         }
+
+        //region Compare if objects just entered into collision, are staying in it, or exited
+        for (Pair pair : collidingPairs) {
+
+            if (!lastCollidingPairs.contains(pair)) {
+                ((PhysicsBody) pair.a.getParent()).onCollisionEnter(pair.b.getParent());
+                ((PhysicsBody) pair.b.getParent()).onCollisionEnter(pair.a.getParent());
+            } else {
+                ((PhysicsBody) pair.a.getParent()).onCollision(pair.b.getParent());
+                ((PhysicsBody) pair.b.getParent()).onCollision(pair.a.getParent());
+            }
+
+        }
+
+        for (Pair pair : lastCollidingPairs) {
+
+            if (!collidingPairs.contains(pair)) {
+                ((PhysicsBody) pair.a.getParent()).onCollisionExit(pair.b.getParent());
+                ((PhysicsBody) pair.b.getParent()).onCollisionExit(pair.a.getParent());
+            }
+
+        }
+
+        // Set lastCollidingPairs array to collidingPairs
+        ArrayList<Pair> tmp = lastCollidingPairs;
+        lastCollidingPairs = collidingPairs;
+        collidingPairs = tmp;
+        //endregion
+
     }
 
     // Resolves collision between A and B using impulse method
@@ -76,8 +117,9 @@ public class CollisionSystem {
         Vector2 relativeVelocity = a.getVelocity().sub(b.getVelocity());
         float relativeVelocityAlongNormal = relativeVelocity.dot(data.normal);
 
+        // Objects are separating, no impulse required
         if (relativeVelocityAlongNormal > 0) {
-            return; // Objects are separating, no impulse required
+            return;
         }
 
         // Get elasticity of the collision
@@ -99,7 +141,11 @@ public class CollisionSystem {
         // Apply position correction to objects
         float totalInverseMass = a.getInverseMass() + b.getInverseMass();
         if (totalInverseMass > 0) {
-            Vector2 correction = data.normal.mul(data.penetration.dot(data.normal) / totalInverseMass);
+            Vector2 correction = data.normal.mul((data.penetration.dot(data.normal) + 1) / totalInverseMass);
+
+            if (data.normal.equals(Vector2.LEFT) || data.normal.equals(Vector2.RIGHT))
+                correction = data.normal.mul((data.penetration.dot(data.normal) + 0) / totalInverseMass);
+
             if (a.getMass() > 0) a.setPosition(a.getPosition().add(correction.mul(a.getInverseMass())));
             if (b.getMass() > 0) b.setPosition(b.getPosition().sub(correction.mul(b.getInverseMass())));
         }
