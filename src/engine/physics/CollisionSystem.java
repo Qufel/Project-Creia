@@ -52,37 +52,22 @@ public class CollisionSystem {
 
                 collidingPairs.add(pair);
 
-                // Objects start colliding
-
-                if (!a.getCollidingObjects().contains(b)) {
-                    a.getCollidingObjects().add(b);
-                }
-
-                if (!b.getCollidingObjects().contains(a)) {
-                    b.getCollidingObjects().add(a);
-                }
-
-                // Add collision point to collider
-                a.addCollisionPoint(data.normal.inverse());
-                b.addCollisionPoint(data.normal);
-
-                // Set onGround if collision normal is Vector2.UP
-                if (data.normal.equals(Vector2.UP)) {
-                    if (((PhysicsBody)a.getParent()).getMass() > 0) ((PhysicsBody)a.getParent()).setOnGround(true);
-                    if (((PhysicsBody)b.getParent()).getMass() > 0) ((PhysicsBody)b.getParent()).setOnGround(true);
-                }
+                a.addCollidingObject(b);
+                b.addCollidingObject(a);
 
                 resolveCollision((PhysicsBody) a.getParent(), (PhysicsBody) b.getParent(), data);
 
             } else {
 
-                a.getCollidingObjects().remove(b);
-                b.getCollidingObjects().remove(a);
+                a.removeCollidingObject(b);
+                b.removeCollidingObject(a);
+
             }
 
         }
 
         //region Compare if objects just entered into collision, are staying in it, or exited
+
         for (Pair pair : collidingPairs) {
 
             if (!lastCollidingPairs.contains(pair)) {
@@ -108,6 +93,7 @@ public class CollisionSystem {
         ArrayList<Pair> tmp = lastCollidingPairs;
         lastCollidingPairs = collidingPairs;
         collidingPairs = tmp;
+
         //endregion
 
     }

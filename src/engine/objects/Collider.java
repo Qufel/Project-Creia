@@ -12,9 +12,8 @@ public class Collider extends GameObject {
 
     private boolean isColliding = false;
 
-    private ArrayList<Collider> collidingObjects = new ArrayList<>(); // Objects that are currently colliding with
-
-    private ArrayList<Vector2> collisionPoints = new ArrayList<>(); // Directions from which collision occurs
+    // Colliders that are currently colliding with collider
+    private ArrayList<Collider> collidingObjects = new ArrayList<>();
 
     public Collider(GameObject parent, String name, Vector2 position, AABB aabb) {
         super(parent, name, position);
@@ -55,30 +54,18 @@ public class Collider extends GameObject {
         return collidingObjects;
     }
 
-    public void removeCollidingObject(Collider collider) {
+    public void addCollidingObject(Collider collider) {
         if (collider != null) {
-            collidingObjects.remove(collider);
-
-            ((PhysicsBody) collider.getParent()).onCollisionExit(this);
-
+            if (!collidingObjects.contains(collider)) {
+                collidingObjects.add(collider);
+            }
         }
     }
 
-    public ArrayList<Vector2> getCollisionPoints() {
-        return collisionPoints;
-    }
-
-    public void addCollisionPoint(Vector2 point) {
-        if (!collisionPoints.contains(point))
-            collisionPoints.add(point);
-    }
-
-    public void removeCollisionPoint(Vector2 point) {
-        collisionPoints.remove(point);
-    }
-
-    public void clearCollisionPoints() {
-        collisionPoints.clear();
+    public void removeCollidingObject(Collider collider) {
+        if (collider != null) {
+            collidingObjects.remove(collider);
+        }
     }
 
 }

@@ -5,14 +5,13 @@ import engine.objects.*;
 import engine.physics.Vector2;
 import engine.physics.shapes.AABB;
 
-import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 
 public class Game extends AbstractEngine {
 
-    private ArrayList<Scene> scenes = new ArrayList<>(Arrays.asList(
+    private ArrayList<Scene> tree = new ArrayList<>(Arrays.asList(
             new Scene("MainScene", new Vector2(4096, 4096)) {
                 private PhysicsBody player = new PhysicsBody(this, "Player", new Vector2(0, 40)) {
 
@@ -55,16 +54,6 @@ public class Game extends AbstractEngine {
                         super.update(engine, delta);
                     }
 
-                    @Override
-                    public void onCollisionEnter(GameObject object) {
-                        System.out.println("Begun colliding with: " + object.toString());
-                    }
-
-                    @Override
-                    public void onCollisionExit(GameObject object) {
-                        System.out.println("No more colliding with: " + object.toString());
-                    }
-
                 };
 
                 private Camera camera = new Camera(this, player, "Camera");
@@ -85,20 +74,16 @@ public class Game extends AbstractEngine {
                     }
 
                     @Override
-                    public void update(Engine engine, float delta) {
-                        if (coin != null) {
-                            if (player.getCollider().isCollidingWith(this.getCollider())) {
-                                if (!coinPickup.isPlaying()) {
-                                    coinPickup.play();
-                                }
-                                this.decompose();
-                                coin = null;
+                    public void onCollisionEnter(GameObject object) {
+                        if (object.equals(player)) {
+                            if (!coinPickup.isPlaying()) {
+                                coinPickup.play();
                             }
+                            this.decompose();
+                            coin = null;
                         }
-
-                        super.update(engine, delta);
                     }
-                };;
+                };
 
                 private StaticBody respawnWall = new StaticBody(this, "RespawnWall", new Vector2(0, -600)) {
 
@@ -112,8 +97,8 @@ public class Game extends AbstractEngine {
                     }
 
                     @Override
-                    public void update(Engine engine, float delta) {
-                        if (player.getCollider().isCollidingWith(respawnWall.getCollider())) {
+                    public void onCollisionEnter(GameObject object) {
+                        if (object.equals(player)) {
                             player.setPosition(new Vector2(0, 40));
                         }
                     }
@@ -149,7 +134,7 @@ public class Game extends AbstractEngine {
     public void start(Engine engine) {
 
         // Run start for all scenes
-        for(Scene scene : scenes) {
+        for(Scene scene : tree) {
             scene.start(engine);
         }
 
@@ -162,7 +147,7 @@ public class Game extends AbstractEngine {
         engine.getPhysics().clearBodies();
 
 
-        for (Scene scene : scenes) {
+        for (Scene scene : tree) {
 
             // Setup CollisionSystem & PhysicsSystem
             scene.addColliders(engine);
@@ -179,13 +164,13 @@ public class Game extends AbstractEngine {
     @Override
     public void render(Engine engine, Renderer renderer, float delta) {
 
-        for (Scene scene : scenes) {
+        for (Scene scene : tree) {
             scene.renderScene(engine, renderer, delta, true);
         }
 
         renderer.drawText("FPS: " + engine.getFramesPerSecond() , 4 + renderer.getCamera().x, 4+ renderer.getCamera().y, 0xffffffff);
-        renderer.drawText("Velocity: " + ((PhysicsBody)scenes.get(0).getChild("Player")).getVelocity(), 4 + renderer.getCamera().x, engine.getHeight() - 20 + renderer.getCamera().y, 0xffffffff);
-        renderer.drawText("Acceleration: " + ((PhysicsBody)scenes.get(0).getChild("Player")).getAcceleration(), 4 + renderer.getCamera().x, engine.getHeight() - 10 + renderer.getCamera().y, 0xffffffff);
+        renderer.drawText("Velocity: " + ((PhysicsBody) tree.get(0).getChild("Player")).getVelocity(), 4 + renderer.getCamera().x, engine.getHeight() - 20 + renderer.getCamera().y, 0xffffffff);
+        renderer.drawText("Acceleration: " + ((PhysicsBody) tree.get(0).getChild("Player")).getAcceleration(), 4 + renderer.getCamera().x, engine.getHeight() - 10 + renderer.getCamera().y, 0xffffffff);
   }
 
     public static void main(String[] args) {

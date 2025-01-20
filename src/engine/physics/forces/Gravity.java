@@ -13,6 +13,6 @@ public class Gravity implements ForceGenerator {
 
     @Override
     public void updateForce(PhysicsBody body, float delta) {
-        body.addForce(this.gravity.mul(delta * 10).mul(body.getMass()));
+        body.addForce(this.gravity.mul(delta * 10));
     }
 }
