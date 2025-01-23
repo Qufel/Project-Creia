@@ -13,7 +13,7 @@ public class Collider extends GameObject {
     private boolean isColliding = false;
 
     // Colliders that are currently colliding with collider
-    private ArrayList<Collider> collidingObjects = new ArrayList<>();
+    private final ArrayList<Collider> collidingObjects = new ArrayList<>();
 
     public Collider(GameObject parent, String name, Vector2 position, AABB aabb) {
         super(parent, name, position);
@@ -29,6 +29,11 @@ public class Collider extends GameObject {
 
     @Override
     public void decompose() {
+
+        for (Collider object : collidingObjects) {
+            object.getCollidingObjects().remove(this);
+        }
+
         collidingObjects.clear();
         isColliding = false;
         super.decompose();
@@ -43,7 +48,7 @@ public class Collider extends GameObject {
     }
 
     public boolean isCollidingWith(GameObject object) {
-        return collidingObjects.contains(object);
+        return getCollidingObjects().contains((Collider) object);
     }
 
     public void setColliding(boolean isColliding) {
