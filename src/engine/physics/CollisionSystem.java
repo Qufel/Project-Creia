@@ -7,6 +7,13 @@ import engine.physics.collisions.*;
 
 import java.util.ArrayList;
 
+/* TODO
+    - Continuous Collision Detection (CCD)
+    - Prevent physics if colliding
+    -
+ */
+
+
 public class CollisionSystem {
 
     private Engine engine;
@@ -72,6 +79,11 @@ public class CollisionSystem {
             if (!lastCollidingPairs.contains(pair)) {
                 ((PhysicsBody) pair.a.getParent()).onCollisionEnter(pair.b.getParent());
                 ((PhysicsBody) pair.b.getParent()).onCollisionEnter(pair.a.getParent());
+
+                // Add collision normal
+                pair.a.addCollisionNormal(new CollisionNormal(pair.b, CollisionData.getNormal(pair.b, pair.a)));
+                pair.b.addCollisionNormal(new CollisionNormal(pair.a, CollisionData.getNormal(pair.a, pair.b)));
+
             } else {
                 ((PhysicsBody) pair.a.getParent()).onCollision(pair.b.getParent());
                 ((PhysicsBody) pair.b.getParent()).onCollision(pair.a.getParent());
@@ -84,6 +96,10 @@ public class CollisionSystem {
             if (!collidingPairs.contains(pair)) {
                 ((PhysicsBody) pair.a.getParent()).onCollisionExit(pair.b.getParent());
                 ((PhysicsBody) pair.b.getParent()).onCollisionExit(pair.a.getParent());
+
+                //  Remove collision normal
+                pair.a.removeCollisionNormal(new CollisionNormal(pair.b, CollisionData.getNormal(pair.b, pair.a)));
+                pair.b.removeCollisionNormal(new CollisionNormal(pair.a, CollisionData.getNormal(pair.a, pair.b)));
             }
 
         }

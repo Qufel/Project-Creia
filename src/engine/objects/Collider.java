@@ -2,6 +2,7 @@ package engine.objects;
 
 import engine.Engine;
 import engine.physics.Vector2;
+import engine.physics.collisions.CollisionNormal;
 import engine.physics.shapes.AABB;
 
 import java.util.ArrayList;
@@ -14,6 +15,8 @@ public class Collider extends GameObject {
 
     // Colliders that are currently colliding with collider
     private final ArrayList<Collider> collidingObjects = new ArrayList<>();
+
+    private final ArrayList<CollisionNormal> collisionNormals = new ArrayList<>();
 
     public Collider(GameObject parent, String name, Vector2 position, AABB aabb) {
         super(parent, name, position);
@@ -55,6 +58,31 @@ public class Collider extends GameObject {
         this.isColliding = isColliding;
     }
 
+    //region CollisionNormals
+
+    public boolean isCollidingFrom(Vector2 normal) {
+        for (CollisionNormal collision : collisionNormals) {
+            if (collision.getNormal().equals(normal)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void addCollisionNormal(CollisionNormal normal) {
+        if (!collisionNormals.contains(normal)) {
+            collisionNormals.add(normal);
+        }
+    }
+
+    public void removeCollisionNormal(CollisionNormal normal) {
+        collisionNormals.remove(normal);
+    }
+
+    //endregion
+
+    //region CollidingObjects
+
     public ArrayList<Collider> getCollidingObjects() {
         return collidingObjects;
     }
@@ -73,4 +101,5 @@ public class Collider extends GameObject {
         }
     }
 
+    //endregion
 }
