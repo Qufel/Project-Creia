@@ -7,15 +7,26 @@ import engine.physics.Vector2;
 public class AABB {
 
     private Collider collider;
-    private Vector2 size = new Vector2(0,0);
+    private Vector2 size = Vector2.ZERO;
+    private Vector2 centerDisplacement = Vector2.ZERO;
 
     public AABB() {
-        super();
+
+    }
+
+    public AABB(AABB aabb) {
+        this.collider = aabb.collider;
+        this.size = aabb.size;
+        this.centerDisplacement = aabb.centerDisplacement;
     }
 
     public AABB(Vector2 size) {
-        super();
         this.size = size;
+    }
+
+    public AABB(Vector2 size, Vector2 centerDisplacement) {
+        this.size = size;
+        this.centerDisplacement = centerDisplacement;
     }
 
     public AABB(Collider collider, Vector2 size) {
@@ -36,11 +47,14 @@ public class AABB {
     }
 
     public Vector2 getMin() {
-        return new Vector2(this.getCenter()).sub(new Vector2(size).mul(0.5));
+        return new Vector2(this.getCenter().add(centerDisplacement)).sub(new Vector2(size).mul(0.5));
     }
 
     public Vector2 getMax() {
-        return new Vector2(this.getCenter()).add(new Vector2(size).mul(0.5));
+        return new Vector2(this.getCenter().add(centerDisplacement)).add(new Vector2(size).mul(0.5));
     }
 
+    public AABB move(Vector2 displacement) {
+        return new AABB(this.size, displacement);
+    }
 }

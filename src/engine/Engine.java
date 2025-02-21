@@ -54,7 +54,7 @@ public class Engine implements Runnable {
         renderer = new Renderer(this);
         input = new Input(this);
         collision = new CollisionSystem(this);
-        physics = new PhysicsSystem((float) 1 / 60, new Vector2(0, -10));
+        physics = new PhysicsSystem((float) 1 / 60, new Vector2(0, -5));
 
         aEngine.start(this);
 
@@ -103,13 +103,13 @@ public class Engine implements Runnable {
 //                collision.sortByMinX();
 
                 // Collision update
-                collision.update();
+                collision.update((float) updateCap);
 
                 // Physics update
                 physics.update((float) updateCap);
 
                 // Update Game
-                aEngine.update(this, (float)updateCap);
+                aEngine.update(this, (float) updateCap);
 
                 input.update(); //Should be last
 

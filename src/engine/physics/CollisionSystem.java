@@ -4,13 +4,16 @@ import engine.Engine;
 import engine.objects.Collider;
 import engine.objects.PhysicsBody;
 import engine.physics.collisions.*;
+import engine.physics.shapes.AABB;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+
+import engine.Renderer;
+import engine.graphics.Color;
 
 /* TODO
     - Continuous Collision Detection (CCD)
-    - Prevent physics if colliding
-    -
  */
 
 
@@ -41,9 +44,9 @@ public class CollisionSystem {
         colliders = new ArrayList<>();
     }
 
-    public void update() {
+    public void update(float delta) {
 
-        getPossiblePairs();
+        possiblePairs = getPossiblePairs(delta);
 
         collidingPairs.clear();
 
@@ -59,7 +62,7 @@ public class CollisionSystem {
                 collidingPairs.add(pair);
 
                 a.addCollidingObject(b);
-                b.addCollidingObject(a);
+                b.addCollidingObject(a);    
 
                 resolveCollision((PhysicsBody) a.getParent(), (PhysicsBody) b.getParent(), data);
 
@@ -77,16 +80,29 @@ public class CollisionSystem {
         for (Pair pair : collidingPairs) {
 
             if (!lastCollidingPairs.contains(pair)) {
-                ((PhysicsBody) pair.a.getParent()).onCollisionEnter(pair.b.getParent());
-                ((PhysicsBody) pair.b.getParent()).onCollisionEnter(pair.a.getParent());
+
+                // ENTERS COLLISION
+
+                PhysicsBody a = (PhysicsBody) pair.a.getParent();
+                PhysicsBody b = (PhysicsBody) pair.b.getParent();
+
+                a.onCollisionEnter(b);
+                b.onCollisionEnter(a);
 
                 // Add collision normal
-                pair.a.addCollisionNormal(new CollisionNormal(pair.b, CollisionData.getNormal(pair.b, pair.a)));
-                pair.b.addCollisionNormal(new CollisionNormal(pair.a, CollisionData.getNormal(pair.a, pair.b)));
+                pair.a.addCollisionNormal(CollisionData.getNormal(pair.b, pair.a));
+                pair.b.addCollisionNormal(CollisionData.getNormal(pair.a, pair.b));
 
             } else {
-                ((PhysicsBody) pair.a.getParent()).onCollision(pair.b.getParent());
-                ((PhysicsBody) pair.b.getParent()).onCollision(pair.a.getParent());
+
+                // STAYS IN COLLISION
+
+                PhysicsBody a = (PhysicsBody) pair.a.getParent();
+                PhysicsBody b = (PhysicsBody) pair.b.getParent();
+
+                a.onCollision(b);
+                b.onCollision(a);
+
             }
 
         }
@@ -94,12 +110,15 @@ public class CollisionSystem {
         for (Pair pair : lastCollidingPairs) {
 
             if (!collidingPairs.contains(pair)) {
+
+                // EXITS COLLISION
+
                 ((PhysicsBody) pair.a.getParent()).onCollisionExit(pair.b.getParent());
                 ((PhysicsBody) pair.b.getParent()).onCollisionExit(pair.a.getParent());
 
                 //  Remove collision normal
-                pair.a.removeCollisionNormal(new CollisionNormal(pair.b, CollisionData.getNormal(pair.b, pair.a)));
-                pair.b.removeCollisionNormal(new CollisionNormal(pair.a, CollisionData.getNormal(pair.a, pair.b)));
+                pair.a.removeCollisionNormal(CollisionData.getNormal(pair.b, pair.a));
+                pair.b.removeCollisionNormal(CollisionData.getNormal(pair.a, pair.b));
             }
 
         }
@@ -153,37 +172,36 @@ public class CollisionSystem {
 
     }
 
-    private ArrayList<Pair> getPossiblePairs() {
-        possiblePairs = new ArrayList<>();
+    private ArrayList<Pair> getPossiblePairs(float delta) {
+        ArrayList<Pair> pairs = new ArrayList<Pair>();
 
-        // TODO: Collision is checked even though objects are not close or are far away from each other.
+        // TODO: Broad-phase pass even though objects are not close or are far away from each other.
 
         for (Collider a : colliders) {
             if (a == null) continue;
 
             for (Collider b : colliders) {
 
-                if (b == null) continue;
-                if (a.equals(b)) continue;
-
+                if (b == null || a.equals(b)) continue;
+                
                 PhysicsBody aBody = (PhysicsBody) a.getParent();
                 PhysicsBody bBody = (PhysicsBody) b.getParent();
 
-                Pair pair = new Pair(a, b);
-
-                if (aBody.equals(bBody)) continue;
+                if (aBody.equals(bBody)) continue;  
                 if (aBody.getVelocity().equals(Vector2.ZERO) && bBody.getVelocity().equals(Vector2.ZERO)) continue;
 
                 if (a.getAABB().getMin().x > b.getAABB().getMax().x) continue;
 
-                if (possiblePairs.contains(pair)) continue;
+                Pair pair = new Pair(a, b);
 
-                possiblePairs.add(pair);
+                if (pairs.contains(pair)) continue;
+
+                pairs.add(pair);
 
             }
         }
 
-        return possiblePairs;
+        return pairs;
     }
 
 }

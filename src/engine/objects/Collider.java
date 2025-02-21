@@ -16,7 +16,7 @@ public class Collider extends GameObject {
     // Colliders that are currently colliding with collider
     private final ArrayList<Collider> collidingObjects = new ArrayList<>();
 
-    private final ArrayList<CollisionNormal> collisionNormals = new ArrayList<>();
+    private final ArrayList<Vector2> collisionNormals = new ArrayList<>();
 
     public Collider(GameObject parent, String name, Vector2 position, AABB aabb) {
         super(parent, name, position);
@@ -46,6 +46,13 @@ public class Collider extends GameObject {
         return aabb;
     }
 
+    public AABB getFutureAABB(float delta) {
+        AABB futureAABB = new AABB(this.getAABB());
+        Vector2 displacement = ( (PhysicsBody) this.getParent()).getVelocity().mul(delta); 
+        futureAABB.move(displacement);
+        return futureAABB;
+    }
+
     public boolean isColliding() {
         return !collidingObjects.isEmpty();
     }
@@ -60,23 +67,18 @@ public class Collider extends GameObject {
 
     //region CollisionNormals
 
-    public boolean isCollidingFrom(Vector2 normal) {
-        for (CollisionNormal collision : collisionNormals) {
-            if (collision.getNormal().equals(normal)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public void addCollisionNormal(CollisionNormal normal) {
+    public void addCollisionNormal(Vector2 normal) {
         if (!collisionNormals.contains(normal)) {
             collisionNormals.add(normal);
         }
     }
 
-    public void removeCollisionNormal(CollisionNormal normal) {
+    public void removeCollisionNormal(Vector2 normal) {
         collisionNormals.remove(normal);
+    }
+
+    public ArrayList<Vector2> getCollisionNormals() {
+        return collisionNormals;
     }
 
     //endregion

@@ -58,60 +58,81 @@ public class Game extends AbstractEngine {
 
                 private Camera camera = new Camera(this, player, "Camera");
 
-                private StaticBody coin = new StaticBody(this, "Coin", new Vector2(128, 20)) {
+                // private StaticBody coin = new StaticBody(this, "Coin", new Vector2(128, 20)) {
 
-                    @Override
-                    public void start(Engine engine) {
+                //     @Override
+                //     public void start(Engine engine) {
 
-                        this.addChildren(
-                                new Sprite2D(coin, "Sprite", new Vector2(0, 0), new Sprite("/res/sprites/coin.png")),
-                                new Collider(coin, "Collider", new Vector2(0, 0), new AABB(new Vector2(12, 12)))
-                        );
+                //         this.addChildren(
+                //                 new Sprite2D(coin, "Sprite", new Vector2(0, 0), new Sprite("/res/sprites/coin.png")),
+                //                 new Collider(coin, "Collider", new Vector2(0, 0), new AABB(new Vector2(12, 12)))
+                //         );
 
-                        setColliding(false);
-                        coinPickup.setVolume(-15);
+                //         setColliding(false);
+                //         coinPickup.setVolume(-15);
 
-                    }
+                //     }
 
-                    @Override
-                    public void onCollisionEnter(GameObject object) {
-                        if (object.equals(player)) {
-                            if (!coinPickup.isPlaying()) {
-                                coinPickup.play();
-                            }
-                            this.decompose();
-                            coin = null;
-                        }
-                    }
-                };
+                //     @Override
+                //     public void onCollisionEnter(GameObject object) {
+                //         if (object.equals(player)) {
+                //             if (!coinPickup.isPlaying()) {
+                //                 coinPickup.play();
+                //             }
+                //             this.decompose();
+                //             coin = null;
+                //         }
+                //     }
+                // };
 
-                private StaticBody respawnWall = new StaticBody(this, "RespawnWall", new Vector2(0, -600)) {
+                // private StaticBody respawnWall = new StaticBody(this, "RespawnWall", new Vector2(0, -600)) {
 
-                    @Override
-                    public void start(Engine engine) {
-                        addChildren(
-                                new Collider(respawnWall, "Collider", new Vector2(0, 0), new AABB(new Vector2(2000, 2)))
-                        );
-                        setColliding(false);
-                        super.start(engine);
-                    }
+                //     @Override
+                //     public void start(Engine engine) {
+                //         addChildren(
+                //                 new Collider(respawnWall, "Collider", new Vector2(0, 0), new AABB(new Vector2(2000, 2)))
+                //         );
+                //         setColliding(false);
+                //         super.start(engine);
+                //     }
 
-                    @Override
-                    public void onCollisionEnter(GameObject object) {
-                        if (object.equals(player)) {
-                            player.setPosition(new Vector2(0, 40));
-                        }
-                    }
+                //     @Override
+                //     public void onCollisionEnter(GameObject object) {
+                //         if (object.equals(player)) {
+                //             player.setPosition(new Vector2(0, 40));
+                //         }
+                //     }
 
-                };
+                // };
 
                 private AudioClip coinPickup = new AudioClip("/res/audio/coin-pick.wav");
 
                 private Tileset tileset = new Tileset("/res/sprites/tileset.png", 16, 16);
 
-                private Tilemap walkable = new Tilemap(this, "TM_Walkable", Vector2.ZERO, tileset, "/res/tmWalkable.csv", true);
+                // private Tilemap walkable = new Tilemap(this, "TM_Walkable", Vector2.ZERO, tileset, "/res/tmWalkable.csv", true);
 
-                private Tilemap foliage = new Tilemap(this, "TM_Foliage", new Vector2(8, 16), tileset, "/res/test_Foliage.csv", false);
+                // private Tilemap foliage = new Tilemap(this, "TM_Foliage", new Vector2(8, 16), tileset, "/res/test_Foliage.csv", false);
+
+                private StaticBody platform = new StaticBody(this, "Platform", Vector2.ZERO) {
+                    
+                    private Sprite2D sprite = new Sprite2D(this, "Sprite2D", Vector2.ZERO, new Sprite("/res/sprites/platform.png"));
+                    private Collider collider = new Collider(this, "Collider", Vector2.ZERO, new AABB(new Vector2(48, 16)));
+                    
+                    @Override
+                    public void start(Engine engine) {
+
+                        this.addChildren(sprite, collider);
+
+                    }
+
+                    @Override
+                    public void onCollisionEnter(GameObject object) {
+                        if (object.equals(player)) {
+                            System.out.println("Collided with player!!");
+                        }
+                    }
+
+                };
 
                 @Override
                 public void start(Engine engine) {
@@ -150,6 +171,9 @@ public class Game extends AbstractEngine {
         for (Scene scene : tree) {
 
             // Setup CollisionSystem & PhysicsSystem
+
+            // TODO: Only add and clear colliders on addition/deletion/enable/disable in order to increase performance
+
             scene.addColliders(engine);
             scene.addPhysicsBodies(engine);
 
@@ -168,10 +192,13 @@ public class Game extends AbstractEngine {
             scene.renderScene(engine, renderer, delta, true);
         }
 
+        GameObject player = tree.get(0).getChild("Player");
+        GameObject platform = tree.get(0).getChild("Platform");
+
         renderer.drawText("FPS: " + engine.getFramesPerSecond() , 4 + renderer.getCamera().x, 4+ renderer.getCamera().y, 0xffffffff);
         renderer.drawText("Velocity: " + ((PhysicsBody) tree.get(0).getChild("Player")).getVelocity(), 4 + renderer.getCamera().x, engine.getHeight() - 20 + renderer.getCamera().y, 0xffffffff);
         renderer.drawText("Acceleration: " + ((PhysicsBody) tree.get(0).getChild("Player")).getAcceleration(), 4 + renderer.getCamera().x, engine.getHeight() - 10 + renderer.getCamera().y, 0xffffffff);
-  }
+    }
 
     public static void main(String[] args) {
 

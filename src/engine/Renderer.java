@@ -229,6 +229,73 @@ public class Renderer {
 
     }
 
+    public void drawLine(Vector2 start, Vector2 end, int color) {
+
+        // Check if start == end
+        if (start.equals(end)) {
+            setPixel(start.x, start.y, color);
+            return;
+        }
+
+        // Workaround for straight lines
+        if (start.x == end.x) {
+            
+            int yStart = start.y < end.y ? start.y : end.y;
+            int yEnd = end.y > start.y ? end.y : start.y;
+
+            for (int y = yStart; y <= yEnd; y++) {
+                setPixel(start.x, y, color);
+            }
+
+            return;
+        }
+
+        if (start.y == end.y) {
+            
+            int xStart = start.x < end.x ? start.x : end.x;
+            int xEnd = end.x > start.x ? end.x : start.x;
+
+            for (int x = xStart; x <= xEnd; x++) {
+                setPixel(x, start.y, color);
+            }
+
+            return;
+        }
+
+        // Parameters of line function
+        float a = (end.y - start.y) / (end.x - start.x);
+        float b = start.y - a * start.x;
+
+        int xStart = start.x < end.x ? start.x : end.x;
+        int xEnd = end.x > start.x ? end.x : start.x;
+
+        // Set First Pixel
+        int lastY = (int) Math.floor(a * xStart + b);
+        setPixel(xStart, lastY, color);
+
+
+        for (int x = xStart + 1; x <= xEnd; x++) {
+
+            int y = EMath.ceilFloor(a * x + b);
+
+            if (Math.abs(y - lastY) <= 1) {
+                setPixel(x, y, color);
+            } else {
+                // Loop through all values between lastY and y
+                int yStart = y < lastY ? y : lastY;
+                int yEnd = lastY > y ? lastY : y;
+
+                for (int i = yStart; i <= yEnd; i++) {
+                    setPixel(x, i, color);
+                }
+            }
+
+            lastY = y;
+
+        }
+
+    }
+
     public void fillRect(int offX, int offY, int width, int height, int color) {
 
         //Skip rendering because the sprite is out of bounds

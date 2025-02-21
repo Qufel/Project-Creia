@@ -138,8 +138,8 @@ public class Scene extends GameObject {
 
         if (object instanceof Collider && debugColliders) {
             AABB aabb = ((Collider) object).getAABB();
-            int width = Math.abs(aabb.getMax().x - aabb.getMin().x);
-            int height = Math.abs(aabb.getMax().y - aabb.getMin().y);
+            int width = (int) Math.abs(aabb.getMax().x - aabb.getMin().x);
+            int height = (int) Math.abs(aabb.getMax().y - aabb.getMin().y);
 
             int color = ((Collider) object).isColliding() ? Color.RED : Color.GREEN;
 
