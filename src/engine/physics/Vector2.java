@@ -1,5 +1,7 @@
 package engine.physics;
 
+import engine.EMath;
+
 public class Vector2 {
 
     public static final Vector2 DOWN = new Vector2(0,-1);
@@ -44,42 +46,11 @@ public class Vector2 {
     }
 
     public Vector2 mul(double v) {
-        double newX = this.x * v, newY = this.y * v;
-        int finalX, finalY;
-
-        if (newX >= 0) {
-            finalX = (int) Math.ceil(newX);
-        } else {
-            finalX = (int) Math.floor(newX);
-        }
-
-        if (newY >= 0) {
-            finalY = (int) Math.ceil(newY);
-        } else {
-            finalY = (int) Math.floor(newY);
-        }
-
-        return new Vector2(finalX, finalY);
+        return new Vector2(EMath.ceilFloor(this.x * v), EMath.ceilFloor(this.y * v));
     }
 
     public Vector2 mul(Vector2 v) {
-
-        double newX = this.x * v.x, newY = this.y * v.y;
-        int finalX, finalY;
-
-        if (newX >= 0) {
-            finalX = (int) Math.floor(newX);
-        } else {
-            finalX = (int) Math.ceil(newX);
-        }
-
-        if (newY >= 0) {
-            finalY = (int) Math.floor(newY);
-        } else {
-            finalY = (int) Math.ceil(newY);
-        }
-
-        return new Vector2(finalX, finalY);
+        return new Vector2(EMath.ceilFloor(this.x * v.x), EMath.ceilFloor(this.y * v.y));
     }
 
     public float dot(Vector2 v) {
@@ -96,7 +67,7 @@ public class Vector2 {
         if (!(obj instanceof Vector2)) return false;
 
         Vector2 v = (Vector2)obj;
-        return v.x == this.x && v.y == this.y;
+        return (float) v.x == (float) this.x && (float) v.y == (float) this.y;
     }
 
     public boolean larger(Vector2 v) {
