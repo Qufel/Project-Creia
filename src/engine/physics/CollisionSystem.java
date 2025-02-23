@@ -90,8 +90,8 @@ public class CollisionSystem {
                 b.onCollisionEnter(a);
 
                 // Add collision normal
-                pair.a.addCollisionNormal(CollisionData.getNormal(pair.b, pair.a));
-                pair.b.addCollisionNormal(CollisionData.getNormal(pair.a, pair.b));
+                pair.a.addCollisionNormal(IntersectionDetector.getNormal(pair.b.getAABB(), pair.a.getAABB()));
+                pair.b.addCollisionNormal(IntersectionDetector.getNormal(pair.a.getAABB(), pair.b.getAABB()));
 
             } else {
 
@@ -115,10 +115,6 @@ public class CollisionSystem {
 
                 ((PhysicsBody) pair.a.getParent()).onCollisionExit(pair.b.getParent());
                 ((PhysicsBody) pair.b.getParent()).onCollisionExit(pair.a.getParent());
-
-                //  Remove collision normal
-                pair.a.removeCollisionNormal(CollisionData.getNormal(pair.b, pair.a));
-                pair.b.removeCollisionNormal(CollisionData.getNormal(pair.a, pair.b));
             }
 
         }
@@ -202,6 +198,22 @@ public class CollisionSystem {
         }
 
         return pairs;
+    }
+
+    public float computeToI(Collider a, Collider b, float delta) {
+
+        Vector2f velocityA = new Vector2f(((PhysicsBody) a.getParent()).getVelocity());
+        Vector2f velocityB = new Vector2f(((PhysicsBody) b.getParent()).getVelocity());
+
+        AABB aBox = a.getAABB();
+        AABB bBox = b.getAABB();
+
+        AABB aFutureAABB = a.getAABB().move(velocityA);
+        AABB aFutureBAB = a.getAABB().move(velocityB);
+
+        float toi = 1.0f;
+
+        return toi;
     }
 
 }

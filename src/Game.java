@@ -85,54 +85,54 @@ public class Game extends AbstractEngine {
                 //     }
                 // };
 
-                // private StaticBody respawnWall = new StaticBody(this, "RespawnWall", new Vector2(0, -600)) {
+                 private StaticBody respawnWall = new StaticBody(this, "RespawnWall", new Vector2(0, -600)) {
 
-                //     @Override
-                //     public void start(Engine engine) {
-                //         addChildren(
-                //                 new Collider(respawnWall, "Collider", new Vector2(0, 0), new AABB(new Vector2(2000, 2)))
-                //         );
-                //         setColliding(false);
-                //         super.start(engine);
-                //     }
+                     @Override
+                     public void start(Engine engine) {
+                         addChildren(
+                                 new Collider(respawnWall, "Collider", new Vector2(0, 0), new AABB(new Vector2(2000, 2)))
+                         );
+                         setColliding(false);
+                         super.start(engine);
+                     }
 
-                //     @Override
-                //     public void onCollisionEnter(GameObject object) {
-                //         if (object.equals(player)) {
-                //             player.setPosition(new Vector2(0, 40));
-                //         }
-                //     }
+                     @Override
+                     public void onCollisionEnter(GameObject object) {
+                         if (object.equals(player)) {
+                             player.setPosition(new Vector2(0, 40));
+                         }
+                     }
 
-                // };
+                 };
 
                 private AudioClip coinPickup = new AudioClip("/res/audio/coin-pick.wav");
 
                 private Tileset tileset = new Tileset("/res/sprites/tileset.png", 16, 16);
 
-                // private Tilemap walkable = new Tilemap(this, "TM_Walkable", Vector2.ZERO, tileset, "/res/tmWalkable.csv", true);
+                 private Tilemap walkable = new Tilemap(this, "TM_Walkable", Vector2.ZERO, tileset, "/res/tmWalkable.csv", true);
 
                 // private Tilemap foliage = new Tilemap(this, "TM_Foliage", new Vector2(8, 16), tileset, "/res/test_Foliage.csv", false);
 
-                private StaticBody platform = new StaticBody(this, "Platform", Vector2.ZERO) {
-                    
-                    private Sprite2D sprite = new Sprite2D(this, "Sprite2D", Vector2.ZERO, new Sprite("/res/sprites/platform.png"));
-                    private Collider collider = new Collider(this, "Collider", Vector2.ZERO, new AABB(new Vector2(48, 16)));
-                    
-                    @Override
-                    public void start(Engine engine) {
-
-                        this.addChildren(sprite, collider);
-
-                    }
-
-                    @Override
-                    public void onCollisionEnter(GameObject object) {
-                        if (object.equals(player)) {
-                            System.out.println("Collided with player!!");
-                        }
-                    }
-
-                };
+//                private StaticBody platform = new StaticBody(this, "Platform", Vector2.ZERO) {
+//
+//                    private Sprite2D sprite = new Sprite2D(this, "Sprite2D", Vector2.ZERO, new Sprite("/res/sprites/platform.png"));
+//                    private Collider collider = new Collider(this, "Collider", Vector2.ZERO, new AABB(new Vector2(48, 16)));
+//
+//                    @Override
+//                    public void start(Engine engine) {
+//
+//                        this.addChildren(sprite, collider);
+//
+//                    }
+//
+//                    @Override
+//                    public void onCollisionEnter(GameObject object) {
+//                        if (object.equals(player)) {
+//                            System.out.println("Collided with player!!");
+//                        }
+//                    }
+//
+//                };
 
                 @Override
                 public void start(Engine engine) {
@@ -192,12 +192,23 @@ public class Game extends AbstractEngine {
             scene.renderScene(engine, renderer, delta, true);
         }
 
-        GameObject player = tree.get(0).getChild("Player");
+        PhysicsBody player = (PhysicsBody) tree.get(0).getChild("Player");
         GameObject platform = tree.get(0).getChild("Platform");
 
         renderer.drawText("FPS: " + engine.getFramesPerSecond() , 4 + renderer.getCamera().x, 4+ renderer.getCamera().y, 0xffffffff);
-        renderer.drawText("Velocity: " + ((PhysicsBody) tree.get(0).getChild("Player")).getVelocity(), 4 + renderer.getCamera().x, engine.getHeight() - 20 + renderer.getCamera().y, 0xffffffff);
-        renderer.drawText("Acceleration: " + ((PhysicsBody) tree.get(0).getChild("Player")).getAcceleration(), 4 + renderer.getCamera().x, engine.getHeight() - 10 + renderer.getCamera().y, 0xffffffff);
+//        renderer.drawText("Velocity: " + player.getVelocity(), 4 + renderer.getCamera().x, engine.getHeight() - 20 + renderer.getCamera().y, 0xffffffff);
+//        renderer.drawText("Acceleration: " + player.getAcceleration(), 4 + renderer.getCamera().x, engine.getHeight() - 10 + renderer.getCamera().y, 0xffffffff);
+
+        boolean up = player.getCollider().getCollisionNormals().contains(Vector2.UP);
+        boolean down = player.getCollider().getCollisionNormals().contains(Vector2.DOWN);
+        boolean left = player.getCollider().getCollisionNormals().contains(Vector2.LEFT);
+        boolean right = player.getCollider().getCollisionNormals().contains(Vector2.RIGHT);
+
+        renderer.drawText("Up: " + up, 4 + renderer.getCamera().x, engine.getHeight() - 10 + renderer.getCamera().y, Color.WHITE);
+        renderer.drawText("Down: " + down, 4 + renderer.getCamera().x, engine.getHeight() - 22 + renderer.getCamera().y, Color.WHITE);
+        renderer.drawText("Left: " + left, 4 + renderer.getCamera().x, engine.getHeight() - 34 + renderer.getCamera().y, Color.WHITE);
+        renderer.drawText("Right: " + right, 4 + renderer.getCamera().x, engine.getHeight() - 46 + renderer.getCamera().y, Color.WHITE);
+
     }
 
     public static void main(String[] args) {

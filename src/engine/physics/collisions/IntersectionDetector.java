@@ -130,42 +130,20 @@ public class IntersectionDetector {
         Vector2 aY = getInterval(b1, Vector2.UP);
         Vector2 bY = getInterval(b2, Vector2.UP);
 
+        // Check for overlap
         if ( (bX.x <= aX.y && aX.x <= bX.y) && (bY.x <= aY.y && aY.x <= bY.y) ) {
 
+            // Get penetration on each axis
             int penetrationY = Math.min(aY.y - bY.x, bY.y - aY.x);
             int penetrationX = Math.min(aX.y - bX.x, bX.y - aX.x);
 
-            // Uses angle to get a normal
+            Vector2 normal = getNormal(b1, b2); // Get normal of collision
 
-            double angle = getAngle(b1.getCenter().sub(b2.getCenter())) * -1;
-
-            double angleTopRight = getAngle(b2.getMax().sub(b2.getCenter()));
-            double angleTopLeft = getAngle(new Vector2(b2.getMin().x, b2.getMax().y).sub(b2.getCenter()));
-            double angleBottomRight = getAngle(new Vector2(b2.getMax().x, b2.getMin().y).sub(b2.getCenter()));
-            double angleBottomLeft = getAngle(b2.getMin().sub(b2.getCenter()));
-
-            if (angle < 0) {
-
-                if (angle < angleBottomLeft) {
-                    setData(data, Vector2.LEFT, new Vector2(penetrationX, penetrationY));
-                } else if (angle > angleBottomRight) {
-                    setData(data, Vector2.RIGHT, new Vector2(penetrationX, penetrationY));
-                } else {
-                    setData(data, Vector2.DOWN, new Vector2(penetrationX, penetrationY));
-                }
-
-            } else {
-
-                if (angle < angleTopRight) {
-                    setData(data, Vector2.RIGHT, new Vector2(penetrationX, penetrationY));
-                } else if (angle > angleTopLeft) {
-                    setData(data, Vector2.LEFT, new Vector2(penetrationX, penetrationY));
-                } else {
-                    setData(data, Vector2.UP, new Vector2(penetrationX, penetrationY));
-                }
-            }
+            if (normal.equals(Vector2.ZERO))
+                throw new RuntimeException("Collision normal vector is zero!");
 
             colliding = true;
+            setData(data, normal, new Vector2(penetrationX, penetrationY));
         }
 
         return colliding;
@@ -230,4 +208,47 @@ public class IntersectionDetector {
     //region Raycast
 
     //endregion
+
+    public static Vector2 getNormal(AABB a, AABB b) {
+
+        Vector2 aX = getInterval(a, Vector2.RIGHT);
+        Vector2 bX = getInterval(b, Vector2.RIGHT);
+
+        Vector2 aY = getInterval(a, Vector2.UP);
+        Vector2 bY = getInterval(b, Vector2.UP);
+
+        // Check for overlap
+        if ( (bX.x <= aX.y && aX.x <= bX.y) && (bY.x <= aY.y && aY.x <= bY.y) ) {
+
+            // Get penetration on each axis
+            int penetrationY = Math.min(aY.y - bY.x, bY.y - aY.x);
+            int penetrationX = Math.min(aX.y - bX.x, bX.y - aX.x);
+
+            if (penetrationY < penetrationX) { // Normal in Y axis
+
+                int ab = aY.y - bY.y + aY.x - bY.x;
+
+                if (ab < 0) {
+                    return Vector2.UP;
+                } else {
+                    return Vector2.DOWN;
+                }
+
+            } else { // Normal in X axis
+
+                int ab = aX.y - bX.y + aX.x - bX.x;
+
+                if (ab < 0) {
+                    return Vector2.LEFT;
+                } else {
+                    return Vector2.RIGHT;
+                }
+
+            }
+
+        }
+
+        return Vector2.ZERO;
+    }
+
 }
