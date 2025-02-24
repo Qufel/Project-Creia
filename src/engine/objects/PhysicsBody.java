@@ -116,6 +116,12 @@ public class PhysicsBody extends GameObject {
         super(parent, name, position);
     }
 
+    @Override
+    public void update(Engine engine, float delta) {
+
+        super.update(engine, delta);
+    }
+
     public void physicsUpdate(float delta) {
         if (mass == 0.0) return; //If mass is 0.0 then it's unaffected by physics
 

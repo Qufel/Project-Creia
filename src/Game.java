@@ -111,13 +111,6 @@ public class Game extends AbstractEngine {
 
                 private Tilemap walkable = new Tilemap(this, "TM_Walkable", Vector2.ZERO, tileset, "/res/tmWalkable.csv", true) {
 
-                     @Override
-                     public void onCollisionEnter(GameObject object) {
-                         if (object.equals(player)) {
-                             System.out.println("Player collision");
-                         }
-                     }
-
                 };
 
                 private Tilemap foliage = new Tilemap(this, "TM_Foliage", new Vector2(8, 16), tileset, "/res/test_Foliage.csv", false);
@@ -183,19 +176,9 @@ public class Game extends AbstractEngine {
         PhysicsBody player = (PhysicsBody) tree.get(0).getChild("Player");
         GameObject platform = tree.get(0).getChild("Platform");
 
-        renderer.drawText("FPS: " + engine.getFramesPerSecond() , 4 + renderer.getCamera().x, 4+ renderer.getCamera().y, 0xffffffff);
-//        renderer.drawText("Velocity: " + player.getVelocity(), 4 + renderer.getCamera().x, engine.getHeight() - 20 + renderer.getCamera().y, 0xffffffff);
-//        renderer.drawText("Acceleration: " + player.getAcceleration(), 4 + renderer.getCamera().x, engine.getHeight() - 10 + renderer.getCamera().y, 0xffffffff);
-
-        boolean up = player.getCollider().getCollisionNormals().contains(Vector2.UP);
-        boolean down = player.getCollider().getCollisionNormals().contains(Vector2.DOWN);
-        boolean left = player.getCollider().getCollisionNormals().contains(Vector2.LEFT);
-        boolean right = player.getCollider().getCollisionNormals().contains(Vector2.RIGHT);
-
-        renderer.drawText("Up: " + up, 4 + renderer.getCamera().x, engine.getHeight() - 10 + renderer.getCamera().y, Color.WHITE);
-        renderer.drawText("Down: " + down, 4 + renderer.getCamera().x, engine.getHeight() - 22 + renderer.getCamera().y, Color.WHITE);
-        renderer.drawText("Left: " + left, 4 + renderer.getCamera().x, engine.getHeight() - 34 + renderer.getCamera().y, Color.WHITE);
-        renderer.drawText("Right: " + right, 4 + renderer.getCamera().x, engine.getHeight() - 46 + renderer.getCamera().y, Color.WHITE);
+        renderer.drawText("FPS: " + engine.getFramesPerSecond() , 4 + renderer.getCamera().x, 4+ renderer.getCamera().y, Color.WHITE);
+        renderer.drawText("Velocity: " + player.getVelocity(), 4 + renderer.getCamera().x, engine.getHeight() - 20 + renderer.getCamera().y, Color.WHITE);
+        renderer.drawText("Acceleration: " + player.getAcceleration(), 4 + renderer.getCamera().x, engine.getHeight() - 10 + renderer.getCamera().y, Color.WHITE);
 
     }
 
