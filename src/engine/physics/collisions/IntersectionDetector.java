@@ -139,10 +139,12 @@ public class IntersectionDetector {
 
             Vector2 normal = getNormal(b1, b2); // Get normal of collision
 
-            if (normal.equals(Vector2.ZERO))
-                throw new RuntimeException("Collision normal vector is zero!");
-
             colliding = true;
+
+            if (normal.equals(Vector2.ZERO)) {
+//                throw new RuntimeException("Collision normal vector is zero!");
+                colliding = false;
+            }
             setData(data, normal, new Vector2(penetrationX, penetrationY));
         }
 
@@ -211,36 +213,21 @@ public class IntersectionDetector {
 
     public static Vector2 getNormal(AABB a, AABB b) {
 
-        Vector2 aX = getInterval(a, Vector2.RIGHT);
-        Vector2 bX = getInterval(b, Vector2.RIGHT);
+        // Calculate penetration depth on each axis
+        int left = b.getMax().x - a.getMin().x;
+        int right = a.getMax().x - b.getMin().x;
+        int top = b.getMax().y - a.getMin().y;
+        int bottom = a.getMax().y - b.getMin().y;
 
-        Vector2 aY = getInterval(a, Vector2.UP);
-        Vector2 bY = getInterval(b, Vector2.UP);
+        // Find the smallest penetration depth
+        int penetrationX = Math.min(left, right);
+        int penetrationY = Math.min(top, bottom);
 
-        // Get penetration on each axis
-        int penetrationY = Math.min(aY.y - bY.x, bY.y - aY.x);
-        int penetrationX = Math.min(aX.y - bX.x, bX.y - aX.x);
-
-        if (penetrationY >= penetrationX) { // Normal in X axis
-
-            int ab = aX.y - bX.y + aX.x - bX.x;
-
-            if (ab <= 0) {
-                return Vector2.LEFT;
-            } else {
-                return Vector2.RIGHT;
-            }
-
-        } else { // Normal in Y axis
-
-            int ab = aY.y - bY.y + aY.x - bY.x;
-
-            if (ab <= 0) {
-                return Vector2.UP;
-            } else {
-                return Vector2.DOWN;
-            }
-
+        // Choose the axis with the smallest penetration depth
+        if (penetrationX < penetrationY) {
+            return (left > right) ? Vector2.LEFT : Vector2.RIGHT;
+        } else {
+            return (top > bottom) ? Vector2.UP : Vector2.DOWN;
         }
 
     }
