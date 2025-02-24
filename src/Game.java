@@ -12,7 +12,7 @@ import java.util.Arrays;
 public class Game extends AbstractEngine {
 
     private ArrayList<Scene> tree = new ArrayList<>(Arrays.asList(
-            new Scene("MainScene", new Vector2(4096, 4096)) {
+            new Scene("MainScene", new Vector2(256, 256)) {
                 private PhysicsBody player = new PhysicsBody(this, "Player", new Vector2(0, 40)) {
 
                     @Override
@@ -109,30 +109,18 @@ public class Game extends AbstractEngine {
 
                 private Tileset tileset = new Tileset("/res/sprites/tileset.png", 16, 16);
 
-                 private Tilemap walkable = new Tilemap(this, "TM_Walkable", Vector2.ZERO, tileset, "/res/tmWalkable.csv", true);
+                private Tilemap walkable = new Tilemap(this, "TM_Walkable", Vector2.ZERO, tileset, "/res/tmWalkable.csv", true) {
 
-                // private Tilemap foliage = new Tilemap(this, "TM_Foliage", new Vector2(8, 16), tileset, "/res/test_Foliage.csv", false);
+                     @Override
+                     public void onCollisionEnter(GameObject object) {
+                         if (object.equals(player)) {
+                             System.out.println("Player collision");
+                         }
+                     }
 
-//                private StaticBody platform = new StaticBody(this, "Platform", Vector2.ZERO) {
-//
-//                    private Sprite2D sprite = new Sprite2D(this, "Sprite2D", Vector2.ZERO, new Sprite("/res/sprites/platform.png"));
-//                    private Collider collider = new Collider(this, "Collider", Vector2.ZERO, new AABB(new Vector2(48, 16)));
-//
-//                    @Override
-//                    public void start(Engine engine) {
-//
-//                        this.addChildren(sprite, collider);
-//
-//                    }
-//
-//                    @Override
-//                    public void onCollisionEnter(GameObject object) {
-//                        if (object.equals(player)) {
-//                            System.out.println("Collided with player!!");
-//                        }
-//                    }
-//
-//                };
+                };
+
+                private Tilemap foliage = new Tilemap(this, "TM_Foliage", new Vector2(8, 16), tileset, "/res/test_Foliage.csv", false);
 
                 @Override
                 public void start(Engine engine) {

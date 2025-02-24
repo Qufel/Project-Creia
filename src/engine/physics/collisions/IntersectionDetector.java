@@ -217,38 +217,32 @@ public class IntersectionDetector {
         Vector2 aY = getInterval(a, Vector2.UP);
         Vector2 bY = getInterval(b, Vector2.UP);
 
-        // Check for overlap
-        if ( (bX.x <= aX.y && aX.x <= bX.y) && (bY.x <= aY.y && aY.x <= bY.y) ) {
+        // Get penetration on each axis
+        int penetrationY = Math.min(aY.y - bY.x, bY.y - aY.x);
+        int penetrationX = Math.min(aX.y - bX.x, bX.y - aX.x);
 
-            // Get penetration on each axis
-            int penetrationY = Math.min(aY.y - bY.x, bY.y - aY.x);
-            int penetrationX = Math.min(aX.y - bX.x, bX.y - aX.x);
+        if (penetrationY >= penetrationX) { // Normal in X axis
 
-            if (penetrationY < penetrationX) { // Normal in Y axis
+            int ab = aX.y - bX.y + aX.x - bX.x;
 
-                int ab = aY.y - bY.y + aY.x - bY.x;
+            if (ab <= 0) {
+                return Vector2.LEFT;
+            } else {
+                return Vector2.RIGHT;
+            }
 
-                if (ab < 0) {
-                    return Vector2.UP;
-                } else {
-                    return Vector2.DOWN;
-                }
+        } else { // Normal in Y axis
 
-            } else { // Normal in X axis
+            int ab = aY.y - bY.y + aY.x - bY.x;
 
-                int ab = aX.y - bX.y + aX.x - bX.x;
-
-                if (ab < 0) {
-                    return Vector2.LEFT;
-                } else {
-                    return Vector2.RIGHT;
-                }
-
+            if (ab <= 0) {
+                return Vector2.UP;
+            } else {
+                return Vector2.DOWN;
             }
 
         }
 
-        return Vector2.ZERO;
     }
 
 }

@@ -62,7 +62,10 @@ public class CollisionSystem {
                 collidingPairs.add(pair);
 
                 a.addCollidingObject(b);
-                b.addCollidingObject(a);    
+                b.addCollidingObject(a);
+
+                a.addCollisionNormal(data.normal.mul(-1));
+                b.addCollisionNormal(data.normal);
 
                 resolveCollision((PhysicsBody) a.getParent(), (PhysicsBody) b.getParent(), data);
 
@@ -88,10 +91,6 @@ public class CollisionSystem {
 
                 a.onCollisionEnter(b);
                 b.onCollisionEnter(a);
-
-                // Add collision normal
-                pair.a.addCollisionNormal(IntersectionDetector.getNormal(pair.b.getAABB(), pair.a.getAABB()));
-                pair.b.addCollisionNormal(IntersectionDetector.getNormal(pair.a.getAABB(), pair.b.getAABB()));
 
             } else {
 
